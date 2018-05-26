@@ -11,7 +11,9 @@ document.getElementById("title").style.marginLeft = w1+"px";//Aligning title in 
 canvas.style.marginLeft = w2+"px";//Aligning canvas in the centre by manipulating margin-left property
 
 var mouseX=100;
-var mouseY=300; 
+var mouseY=300;
+var oldMouseX=100;
+var oldMouseY=300; 
 var radius=30;//Character's radius
 var score=0;
 var nWalls=6;//Number of walls to be generated initially
@@ -31,6 +33,8 @@ var breadth=45;
 var length;
 var i=0;
 var j=0;
+var time=0;
+var inc=0.05;
 
 var dead = new Audio("audio/dead.wav");
 
@@ -81,7 +85,7 @@ function circleRectangleCollision(circle,rect){
     	return false;
     }
     if(distX<=(rect.w/2)){
-    	//console.log(distX+","+rect.w/2);
+    	console.log(distX-rect.w/2);
     	return true;
     } 
    	if(distY<=(rect.h/2)){
@@ -110,6 +114,11 @@ function readMouseMove(e){
 		if(mouseY>canvasHeight){
 			mouseY=canvasHeight;
 		}
+		if(oldMouseX<mouseX||oldMouseY!=mouseY){
+			scoreUpdate();
+		}
+		oldMouseX=mouseX;
+		oldMouseY=mouseY;
 		drawCharacter();
 	}
 }
@@ -189,9 +198,22 @@ function obstaclesUpdate(){
 	}
 }
 
+function scoreUpdate(){
+	time+=inc;
+	score=Math.round(speed*time);
+}
+
+function scoreDraw(){	
+	ctx.fillStyle = "white";
+	ctx.font = "25px bold Trebuchet MS";
+	ctx.fillText("Score : "+score,canvasWidth-canvasWidth*0.12,canvasHeight-canvasHeight*0.05);
+	ctx.fillStyle = "#ff1744";
+}	
+
 function initialise(){
 	drawCharacter();
 	obstaclesUpdate();
+	scoreDraw();
 }
 
 function pauseGameDraw(){//Function which draws the card placed on game pause
