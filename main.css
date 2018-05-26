@@ -3,14 +3,14 @@ html{
 }
 
 #title{
-	color: orange;
+	color: violet;
 	font-family: "Trebuchet MS";
 	font-style: italic;
 	font-size: 2.7em;
 	padding: 5px;
 	width: 280px;
 	border-style: solid;
-	border-color: orange;
+	border-color: darkviolet;
 	border-radius: 10px;
 }
 
