@@ -83,6 +83,7 @@ function stopAudio(audio) {    //Function to stop audio the current audio from p
 
 function circleRectangleCollision(circle,rect,side){
 
+	//Calculating distances between centres of circle and rectangle
 	var distX = Math.abs(circle.x - rect.x-rect.w/2);
     var distY = Math.abs(circle.y - rect.y-rect.h/2);
 
@@ -95,13 +96,12 @@ function circleRectangleCollision(circle,rect,side){
     	return false;
     }
    if(distX<=(rect.w/2)){
-    	if((circle.y+circle.r>=rect.y&&side=="south")||(circle.y-circle.r<=rect.y+rect.h&&side=="north")){
-    		console.log("hey1");
-    		return true;
-    	}
+    	console.log("hey1");
+    	return true;
+    	
     } 
    	if(distY<=(rect.h/2)){
-   		    	console.log("hey2");
+   		    console.log("hey2");
    			return true;
    	}
 
@@ -172,7 +172,7 @@ function obstacle(x,y,breadth,length,side,hasTwoWalls){
 
 		collision=circleRectangleCollision(circle,rect,this.side);
 		if(collision==true){
-			//console.log("Gameover");
+			console.log("Gameover");
 			//gameOver=true;
 		}
 
@@ -182,8 +182,8 @@ function obstacle(x,y,breadth,length,side,hasTwoWalls){
 
 			collision=circleRectangleCollision(circle,rect,this.side);
 			if(collision==true){
-			//console.log("Gameover");
-			//gameOver=true;
+				console.log("Gameover");
+				//gameOver=true;
 			}
 		}
 	}
