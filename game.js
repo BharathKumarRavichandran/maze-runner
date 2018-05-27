@@ -17,7 +17,7 @@ var oldMouseY=300;
 var radius=30;//Character's radius
 var score=0;
 var nWalls=6;//Number of walls to be generated initially
-var speed=2.7;//speed at which the obstacles approach the character
+var speed=3.5;//speed at which the obstacles approach the character
 var obstacleDist=90;
 var nTwoWalls=0;
 
@@ -174,6 +174,17 @@ function obstacle(x,y,breadth,length,side,hasTwoWalls){
 		if(collision==true){
 			//console.log("Gameover");
 			//gameOver=true;
+		}
+
+		if(this.hasTwoWalls==true){
+			var circle={x:mouseX,y:mouseY,r:radius};
+			var rect={x:this.x,y:this.y+this.length+wallDist,w:this.breadth,h:twoWallLength};
+
+			collision=circleRectangleCollision(circle,rect,this.side);
+			if(collision==true){
+			//console.log("Gameover");
+			//gameOver=true;
+			}
 		}
 	}
 }
