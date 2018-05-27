@@ -147,9 +147,6 @@ function obstacle(x,y,breadth,length,side,hasTwoWalls){
 	this.update = function(){
 		if(this.x<-breadth){
 			this.x=canvasWidth;
-			if(this.hasTwoWalls==true){
-				this.length=50+Math.random()*100;;
-			}
 			if(this.side=="north"){
 				this.length=280+Math.random()*140;
 				if(this.hasTwoWalls==true){
@@ -240,6 +237,7 @@ function obstaclesUpdate(){
 			k=4;
 		}
 		obstacleArray[k].hasTwoWalls=true;
+		obstacleArray[k].length=50+Math.random()*100;
 	}
 	for(j=0;j<nWalls;j++){
 		obstacleArray[j].update();
