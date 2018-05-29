@@ -45,7 +45,7 @@ var i=0;
 var j=0;
 var k=0;
 var p=0;
-var q=0;
+var q=2;
 var rand;
 var time=0;
 var inc=0.05;
