@@ -378,6 +378,7 @@ function gameOverDraw(){//end screen to draw on canvas when the game is over
 function animation(){
 
 	if(enter==true){
+		bg1.play();
 		initialise();
 
 		if(pause==true){
@@ -390,6 +391,7 @@ function animation(){
 			return;
 		}
 		if(gameOver==true){//Gameover condition checking
+			stopAudio(bg1);
 			dead.play();
 			gameOverDraw();
 			return;
