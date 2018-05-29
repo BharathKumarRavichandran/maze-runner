@@ -10,16 +10,24 @@ var w2 = screenWidth*0.14;
 document.getElementById("title").style.marginLeft = w1+"px";//Aligning title in the centre by manipulating margin-left property
 canvas.style.marginLeft = w2+"px";//Aligning canvas in the centre by manipulating margin-left property
 
+var health=160;//Initial Health
 var mouseX=50;
 var mouseY=100;
 var oldMouseX=100;
 var oldMouseY=300; 
+var oldHeroX=100;
+var oldHeroY=300;
 var heroX=mouseX;
 var heroY=mouseY;
+var hitmanX;
+var hitmanY;
 var radius=30;//Character's radius
-var score=0;
+var score=0;//score of the character
+var level=1;//Hacker mode level>=1---Basic mode level=0
 var nWalls=6;//Number of walls to be generated initially
+var nHitman=3;//Number of Hitman generated initially
 var speed=3;//speed at which the obstacles approach the character
+var heroVelocity=3;
 var obstacleDist=90;
 var nTwoWalls=0;
 
@@ -34,10 +42,12 @@ var gameOver=false;
 
 var obstacleArray = new Array();
 var twoWall = new Array();
+var hitmanArray = new Array();
 
 var x;
 var y;
 var side;
+var orient;
 var breadth=50;
 var length;
 var twoWallLength = 500;
@@ -51,18 +61,29 @@ var time=0;
 var inc=0.05;
 var heroWidth= 50;
 var heroHeight= 70;
+var hitmanWidth=50;
+var hitmanHeight=70;
 
 var hero = new Image();
+var hitmanImage = new Image();
 
 hero.src = "assets/hero.jpg";
+hitmanImage.src = "assets/hitman.png";
 
-var bg1 = new Audio("audio/Surreal-Chase_Looping.mp3");
-var bg2 = new Audio("audio/Puzzle-Game_Looping.mp3");
+var bgAudio1 = new Audio("audio/Surreal-Chase_Looping.mp3");
+var bgAudio2 = new Audio("audio/Puzzle-Game_Looping.mp3");
 var hit = new Audio("audio/hit.wav");
 var dead = new Audio("audio/dead.wav");
 
-bg1.loop = true;
-bg2.loop = true;
+bgAudio1.loop = true;
+bgAudio2.loop = true;
+
+if(level==0){//For Basic mode
+	speed=3;
+}
+else{//For Hacker mode
+	speed=1.3;
+}
 
 document.onmousemove = readMouseMove;
 
@@ -145,20 +166,39 @@ function readMouseMove(e){
 	if((pause==false&&gameOver==false)&&(enter==true)&&(mouseDown==true)){
 		mouseX = e.clientX-243;
 		mouseY = e.clientY-126;
-		if(mouseX<0){
-			mouseX=0;
+		if(level==0){//For Basic mode
+			if(mouseX<0){
+				heroX=0;
+			}
+			if(mouseX+heroWidth>canvasWidth){
+				heroX=canvasWidth-heroWidth;
+			}
+			if(mouseY<0){
+				heroY=0;
+			}
+			if(mouseY+heroHeight>canvasHeight){
+				heroY=canvasHeight-heroHeight;
+			}
+			if(oldMouseX<mouseX||oldMouseY!=mouseY){
+				scoreUpdate();
+			}
 		}
-		if(mouseX+heroWidth>canvasWidth){
-			mouseX=canvasWidth-heroWidth;
-		}
-		if(mouseY<0){
-			mouseY=0;
-		}
-		if(mouseY+heroHeight>canvasHeight){
-			mouseY=canvasHeight-heroHeight;
-		}
-		if(oldMouseX<mouseX||oldMouseY!=mouseY){
-			scoreUpdate();
+		else{//For Hacker mode
+			if(heroX<0){
+				heroX=0;
+			}
+			if(heroX+heroWidth>canvasWidth){
+				heroX=canvasWidth-heroWidth;
+			}
+			if(heroY<0){
+				heroY=0;
+			}
+			if(heroY+heroHeight>canvasHeight){
+				heroY=canvasHeight-heroHeight;
+			}
+			if(oldHeroX<heroX||oldHeroY!=heroY){
+				scoreUpdate();
+			}
 		}
 		if(mouseX>oldMouseX){
 			q=2;
@@ -186,7 +226,6 @@ function readMouseMove(e){
 			else{
 				p=0;
 			}
-
 		}
 		if(mouseY<oldMouseY){
 			q=3;
@@ -197,8 +236,26 @@ function readMouseMove(e){
 				p=0;
 			}
 		}
+		if(level!=0){
+			if(mouseX>heroX){
+			heroX+=heroVelocity;
+			}
+			if(mouseX<heroX){
+				heroX-=heroVelocity;
+			}
+			if(mouseY>heroY){
+				heroY+=heroVelocity;
+
+			}
+			if(mouseY<heroY){
+				heroY-=heroVelocity;
+			}
+		}
+	
 		oldMouseX=mouseX;
 		oldMouseY=mouseY;
+		oldHeroX=heroX;
+		oldHeroY=heroY;
 		drawCharacter();
 	}
 }
@@ -233,7 +290,7 @@ function obstacle(x,y,breadth,length,side,hasTwoWalls){
 		}
 	}
 
-	this.collide = function(){
+	this.heroWallCollide = function(){
 		//Checking for normal walls
 		if(((mouseX+heroWidth>=this.x)&&(mouseX<=this.x+this.breadth))&&((mouseY<=this.y+this.length)&&(this.side=="north"))){
 			gameOver=true;
@@ -254,6 +311,13 @@ function obstacle(x,y,breadth,length,side,hasTwoWalls){
 	}
 }
 
+function hitman(x,y,side,orient){
+	this.x = x;
+	this.y = y;
+	this.side = side;
+	this.orient = orient;
+}
+
 function obstaclePosition(i){
 	x = canvasWidth-190*i;
 	x+=250;
@@ -271,8 +335,16 @@ function obstaclePosition(i){
 	obstacleArray.push(new obstacle(x,y,breadth,length,side,hasTwoWalls)); 
 }
 
+function hitmanPosition(i){
+	//hitmanArray.push(new hitman(x,y,side,orient));
+}
+
 for(i=0;i<nWalls;i++){
 	obstaclePosition(i);
+}
+
+for(i=0;i<nHitman;i++){
+	//hitmanPosition(i);
 }
 
 function drawTitleCard(){
@@ -295,10 +367,11 @@ function drawTitleCard(){
 
 function drawCharacter(){
 	ctx.clearRect(0,0,canvasWidth,canvasHeight);
-	heroX = mouseX;
-	heroY = mouseY;
+	if(level==0){
+		heroX=mouseX;
+		heroY=mouseY;
+	}
 	ctx.drawImage(hero,48*p,72*q,48,72,heroX,heroY,heroWidth,heroHeight);
-
 }
 
 function drawObstacles(x,y,breadth,length){
@@ -323,7 +396,9 @@ function obstaclesUpdate(){
 	}
 	for(j=0;j<nWalls;j++){
 		obstacleArray[j].update();
-		obstacleArray[j].collide();
+		if(level==0){
+			obstacleArray[j].heroWallCollide();
+		}
 		drawObstacles(obstacleArray[j].x,obstacleArray[j].y,obstacleArray[j].breadth,obstacleArray[j].length);
 		obstacleArray[j].x-=speed;
 	}
@@ -341,10 +416,54 @@ function scoreDraw(){
 	ctx.fillStyle = "#ff1744";
 }	
 
+function healthmeterDraw(){	
+	ctx.fillStyle = "white";
+	ctx.fillRect(0.05*canvasWidth,0.9*canvasHeight,170,25);
+	ctx.fillStyle = "black";
+	ctx.fillRect(0.05*canvasWidth+5,0.9*canvasHeight+5,160,15);
+	ctx.fillStyle = "red";
+	ctx.fillRect(0.05*canvasWidth+5,0.9*canvasHeight+5,health,15);
+}
+
+function levelDraw(){
+	ctx.fillStyle = "white";
+	ctx.font = "25px bold Trebuchet MS";
+	ctx.fillText("Level : "+level,0.9*canvasWidth,0.07*canvasHeight);
+}
+
+function levelUpdate(){
+	if(score>500){
+		level=2;
+		speed=1.6;
+		heroVelocity=3.3;
+	}
+	else if(score>1000){
+		level=3;
+		speed=2;
+		heroVelocity=3.6;
+	}
+	else if(score>1500){
+		level=4;
+		speed=2.3;
+		heroVelocity=3.9;
+	}
+	else if(score>2000){
+		level=5;
+		speed=2.7;
+		heroVelocity=4.2;
+	}	
+	else if(score>2500){
+		gameCompleteDraw();
+	}
+}
+
 function initialise(){
 	drawCharacter();
 	obstaclesUpdate();
 	scoreDraw();
+	healthmeterDraw();
+	levelDraw();
+	levelUpdate();
 }
 
 function pauseGameDraw(){//Function which draws the card placed on game pause
@@ -389,11 +508,30 @@ function gameOverDraw(){//end screen to draw on canvas when the game is over
 	ctx.fillText("Press R to restart",canvasWidth-canvasWidth*0.63,canvasHeight-canvasHeight*0.40);
 }
 
+function gameCompleteDraw(){//end screen to draw on canvas when the game is over
+	ctx.fillStyle = "#000000";
+	ctx.globalAlpha = 0.6;
+	ctx.fillRect(canvasWidth-canvasWidth*0.73,canvasHeight-canvasHeight*0.8,500,300);
+	ctx.globalAlpha = 1;
+	ctx.fillStyle = "green";
+	ctx.font = "40px Trebuchet MS";
+	ctx.fillText("GAME COMPLETED",canvasWidth-canvasWidth*0.65,canvasHeight-canvasHeight*0.65);
+	ctx.font = "30px Trebuchet MS";
+	ctx.fillStyle = "#FFFFFF";
+	ctx.fillText("Score : "+score,canvasWidth-canvasWidth*0.58,canvasHeight-canvasHeight*0.53);
+	ctx.fillText("Press R to restart",canvasWidth-canvasWidth*0.63,canvasHeight-canvasHeight*0.40);
+}
+
 
 function animation(){
 
 	if(enter==true){
-		bg1.play();
+		if(level==0){
+			bgAudio1.play();
+		}
+		else{
+			bgAudio2.play();
+		}
 		initialise();
 
 		if(pause==true){
@@ -406,9 +544,26 @@ function animation(){
 			return;
 		}
 		if(gameOver==true){//Gameover condition checking
-			stopAudio(bg1);
+			health=0;
+			healthmeterDraw();
+			if(level==0){
+				stopAudio(bgAudio1);
+			}
+			else{
+				stopAudio(bgAudio2);
+			}
 			dead.play();
 			gameOverDraw();
+			return;
+		}
+		if(score>2500){
+			if(level==0){
+				stopAudio(bgAudio1);
+			}
+			else{
+				stopAudio(bgAudio2);
+			}
+			gameCompleteDraw();
 			return;
 		}
 	}	
