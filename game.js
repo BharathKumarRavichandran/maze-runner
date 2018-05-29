@@ -228,14 +228,14 @@ function obstacle(x,y,breadth,length,side,hasTwoWalls){
 			gameOver=true;
 			hit.play();
 		}
-		if(((mouseX+heroWidth>=this.x)&&(mouseX<=this.x+this.breadth))&&((mouseY>=this.y)&&(this.side=="south"))){
+		if(((mouseX+heroWidth>=this.x)&&(mouseX<=this.x+this.breadth))&&((mouseY+heroHeight>=this.y)&&(this.side=="south"))){
 			gameOver=true;
 			hit.play();
 		}
 
 		//Checking for extra wall in a Two wall system
 		if(this.hasTwoWalls==true){
-			if(((mouseX+heroWidth>=this.x)&&(mouseX<=this.x+this.breadth))&&((mouseY>=this.y+this.length+wallDist))){
+			if(((mouseX+heroWidth>=this.x)&&(mouseX<=this.x+this.breadth))&&((mouseY+heroHeight>=this.y+this.length+wallDist))){
 				gameOver=true;
 				hit.play();
 			}
