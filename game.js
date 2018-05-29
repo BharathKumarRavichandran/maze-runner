@@ -137,14 +137,14 @@ function readMouseMove(e){
 		if(mouseX<0){
 			mouseX=0;
 		}
-		if(mouseX>canvasWidth){
-			mouseX=canvasWidth;
+		if(mouseX+heroWidth>canvasWidth){
+			mouseX=canvasWidth-heroWidth;
 		}
 		if(mouseY<0){
 			mouseY=0;
 		}
-		if(mouseY>canvasHeight){
-			mouseY=canvasHeight;
+		if(mouseY+heroHeight>canvasHeight){
+			mouseY=canvasHeight-heroHeight;
 		}
 		if(oldMouseX<mouseX||oldMouseY!=mouseY){
 			scoreUpdate();
