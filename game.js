@@ -21,6 +21,7 @@ var speed=3;//speed at which the obstacles approach the character
 var obstacleDist=90;
 var nTwoWalls=0;
 
+var enter=false;
 var hasTwoWalls=false;
 var wallDist = 130;
 var collision=false; 
@@ -58,12 +59,16 @@ document.onmousemove = readMouseMove;
 
 document.addEventListener("keydown",function(event){
 
+	if(event.keyCode==13){//enter keyCode
+		enter=true;
+	}
+
 	if(event.keyCode == 82){// R keyCode
 		stopAudio(dead);
 		window.location.reload();
 	}
 
-	if(event.keyCode==80){//p pause/resume
+	if(event.keyCode==80&&enter==true){//p pause/resume
         if(pause==false){
         	pause=true;
         }
@@ -71,14 +76,14 @@ document.addEventListener("keydown",function(event){
         	pause=false;	
         	animation();
         }
-       	if(quit==true&&pause==true){
+       	if((quit==true&&pause==true)&&(enter==true)){
         	initialise();
 			quit=false;
 			pauseGameDraw();
        	}
     }
 
-    if(event.keyCode==81){//q quit
+    if(event.keyCode==81&&enter==true){//q quit
         quit=true;
     }
 
@@ -120,7 +125,7 @@ function circleRectangleCollision(circle,rect,side){
 }
 
 function readMouseMove(e){
-	if(pause==false&&gameOver==false){
+	if((pause==false&&gameOver==false)&&enter==true){
 		mouseX = e.clientX-243;
 		mouseY = e.clientY-126;
 		if(mouseX<0){
@@ -253,6 +258,22 @@ for(i=0;i<nWalls;i++){
 	obstaclePosition(i);
 }
 
+function drawTitleCard(){
+	ctx.fillStyle = "black";
+	ctx.fillRect(0,0,canvasWidth,canvasHeight);
+	ctx.fillStyle = "violet";
+	ctx.font = "bold italic 50px Trebuchet MS";
+	ctx.fillText("Maze Runner",380,120);
+	ctx.fillStyle = "red";
+	ctx.font = "23px Trebuchet MS";
+	ctx.fillText("WARNING: Don't ever dare to touch the walls",315,200);
+	ctx.fillStyle = "yellow";
+	ctx.font = "bold 30px Trebuchet MS";
+	ctx.fillText("Move mouse to move the character",300,270);
+	ctx.fillStyle = "white";
+	ctx.fillText("Press ENTER to start the game!",330,390);
+}
+
 function drawCharacter(){
 	ctx.clearRect(0,0,canvasWidth,canvasHeight);
 	ctx.drawImage(hero,48*p,72*q,48,72,mouseX,mouseY,heroWidth,heroHeight);
@@ -350,24 +371,26 @@ function gameOverDraw(){//end screen to draw on canvas when the game is over
 
 function animation(){
 
-	initialise();
+	if(enter==true){
+		initialise();
 
-	if(pause==true){
-		pauseGameDraw();
-		return;
-	}
-	if(quit==true){
-		pause=true;
-		quitGameDraw();
-		return;
-	}
-	if(gameOver==true){//Gameover condition checking
-		dead.play();
-		gameOverDraw();
-		return;
-	}
-
+		if(pause==true){
+			pauseGameDraw();
+			return;
+		}
+		if(quit==true){
+			pause=true;
+			quitGameDraw();
+			return;
+		}
+		if(gameOver==true){//Gameover condition checking
+			dead.play();
+			gameOverDraw();
+			return;
+		}
+	}	
 	requestAnimationFrame(animation);
 }
 
+drawTitleCard();
 animation();
