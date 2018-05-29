@@ -53,7 +53,13 @@ var hero = new Image();
 
 hero.src = "assets/hero.jpg";
 
+var bg1 = new Audio("audio/Surreal-Chase_Looping.mp3");
+var bg2 = new Audio("audio/Puzzle-Game_Looping.mp3");
+var hit = new Audio("audio/hit.wav");
 var dead = new Audio("audio/dead.wav");
+
+bg1.loop = true;
+bg2.loop = true;
 
 document.onmousemove = readMouseMove;
 
@@ -220,18 +226,22 @@ function obstacle(x,y,breadth,length,side,hasTwoWalls){
 		//Checking for normal walls
 		if(((mouseX+heroWidth>=this.x)&&(mouseX<=this.x+this.breadth))&&((mouseY<=this.y+this.length)&&(this.side=="north"))){
 			gameOver=true;
+			hit.play();
 		}
 		if(((mouseX+heroWidth>=this.x)&&(mouseX<=this.x+this.breadth))&&((mouseY>=this.y)&&(this.side=="south"))){
 			gameOver=true;
+			hit.play();
 		}
 
 		//Checking for extra wall in a Two wall system
 		if(this.hasTwoWalls==true){
 			if(((mouseX+heroWidth>=this.x)&&(mouseX<=this.x+this.breadth))&&((mouseY<=this.y+this.length)&&(this.side=="north"))){
 				gameOver=true;
+				hit.play();
 			}
 			if(((mouseX+heroWidth>=this.x)&&(mouseX<=this.x+this.breadth))&&((mouseY>=this.y)&&(this.side=="south"))){
 				gameOver=true;
+				hit.play();
 			}
 		}
 	}
