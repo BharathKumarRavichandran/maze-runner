@@ -106,11 +106,6 @@ canvas.addEventListener("mousedown",function(event){
 	}
 },false);
 
-
-canvas.addEventListener("mouseup",function(event){
-	mouseDown=false;
-},false);
-
 function stopAudio(audio) {    //Function to stop audio the current audio from playing
     audio.pause();
     audio.currentTime = 0;
@@ -290,9 +285,11 @@ function drawTitleCard(){
 	ctx.font = "23px Trebuchet MS";
 	ctx.fillText("WARNING: Don't ever dare to touch the walls",315,200);
 	ctx.fillStyle = "yellow";
-	ctx.font = "bold 30px Trebuchet MS";
-	ctx.fillText("Click on the character and drag to move the character",180,270);
+	ctx.font = "bold 27px Trebuchet MS";
+	ctx.fillText("Click on the character at first ",340,270);
+	ctx.fillText("then move the cursor to move the character",250,320);
 	ctx.fillStyle = "white";
+	ctx.font = "bold 30px Trebuchet MS";
 	ctx.fillText("Press ENTER to start the game!",330,390);
 }
 
