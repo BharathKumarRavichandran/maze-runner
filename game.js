@@ -10,19 +10,19 @@ var w2 = screenWidth*0.14;
 document.getElementById("title").style.marginLeft = w1+"px";//Aligning title in the centre by manipulating margin-left property
 canvas.style.marginLeft = w2+"px";//Aligning canvas in the centre by manipulating margin-left property
 
-var mouseX=100;
-var mouseY=300;
+var mouseX=50;
+var mouseY=100;
 var oldMouseX=100;
 var oldMouseY=300; 
 var radius=30;//Character's radius
 var score=0;
 var nWalls=6;//Number of walls to be generated initially
-var speed=3.5;//speed at which the obstacles approach the character
+var speed=3;//speed at which the obstacles approach the character
 var obstacleDist=90;
 var nTwoWalls=0;
 
 var hasTwoWalls=false;
-var wallDist = 100;
+var wallDist = 130;
 var collision=false; 
 var pause=false;
 var quit=false;
@@ -34,15 +34,23 @@ var twoWall = new Array();
 var x;
 var y;
 var side;
-var breadth=45;
+var breadth=50;
 var length;
 var twoWallLength = 500;
 var i=0;
 var j=0;
 var k=0;
+var p=0;
+var q=0;
 var rand;
 var time=0;
 var inc=0.05;
+var heroWidth= 50;
+var heroHeight= 70;
+
+var hero = new Image();
+
+hero.src = "assets/hero.jpg";
 
 var dead = new Audio("audio/dead.wav");
 
@@ -130,6 +138,43 @@ function readMouseMove(e){
 		if(oldMouseX<mouseX||oldMouseY!=mouseY){
 			scoreUpdate();
 		}
+		if(mouseX>oldMouseX){
+			q=2;
+			if(p<2){
+				p++;
+			}
+			else{
+				p=0;
+			}
+		}
+		if(mouseX<oldMouseX){
+			q=1;
+			if(p<2){
+				p++;
+			}
+			else{
+				p=0;
+			}
+		}
+		if(mouseY>oldMouseY){
+			q=0;
+			if(p<2){
+				p++;
+			}
+			else{
+				p=0;
+			}
+
+		}
+		if(mouseY<oldMouseY){
+			q=3;
+			if(p<2){
+				p++;
+			}
+			else{
+				p=0;
+			}
+		}
 		oldMouseX=mouseX;
 		oldMouseY=mouseY;
 		drawCharacter();
@@ -167,23 +212,21 @@ function obstacle(x,y,breadth,length,side,hasTwoWalls){
 	}
 
 	this.collide = function(){
-		var circle={x:mouseX,y:mouseY,r:radius};
-		var rect={x:this.x,y:this.y,w:this.breadth,h:this.height};
-
-		collision=circleRectangleCollision(circle,rect,this.side);
-		if(collision==true){
-			console.log("Gameover");
-			//gameOver=true;
+		//Checking for normal walls
+		if(((mouseX+heroWidth>=this.x)&&(mouseX<=this.x+this.breadth))&&((mouseY<=this.y+this.length)&&(this.side=="north"))){
+			gameOver=true;
+		}
+		if(((mouseX+heroWidth>=this.x)&&(mouseX<=this.x+this.breadth))&&((mouseY>=this.y)&&(this.side=="south"))){
+			gameOver=true;
 		}
 
+		//Checking for extra wall in a Two wall system
 		if(this.hasTwoWalls==true){
-			var circle={x:mouseX,y:mouseY,r:radius};
-			var rect={x:this.x,y:this.y+this.length+wallDist,w:this.breadth,h:twoWallLength};
-
-			collision=circleRectangleCollision(circle,rect,this.side);
-			if(collision==true){
-				console.log("Gameover");
-				//gameOver=true;
+			if(((mouseX+heroWidth>=this.x)&&(mouseX<=this.x+this.breadth))&&((mouseY<=this.y+this.length)&&(this.side=="north"))){
+				gameOver=true;
+			}
+			if(((mouseX+heroWidth>=this.x)&&(mouseX<=this.x+this.breadth))&&((mouseY>=this.y)&&(this.side=="south"))){
+				gameOver=true;
 			}
 		}
 	}
@@ -203,7 +246,6 @@ function obstaclePosition(i){
 		y=240+Math.random()*100;
 		length=500;
 	}
-	breadth = 45;
 	obstacleArray.push(new obstacle(x,y,breadth,length,side,hasTwoWalls)); 
 }
 
@@ -213,10 +255,8 @@ for(i=0;i<nWalls;i++){
 
 function drawCharacter(){
 	ctx.clearRect(0,0,canvasWidth,canvasHeight);
-	ctx.beginPath();
-	ctx.fillStyle = "green";
-	ctx.arc(mouseX,mouseY,radius,0,2*Math.PI);
-	ctx.fill();	
+	ctx.drawImage(hero,48*p,72*q,48,72,mouseX,mouseY,heroWidth,heroHeight);
+
 }
 
 function drawObstacles(x,y,breadth,length){
