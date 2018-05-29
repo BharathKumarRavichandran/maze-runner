@@ -335,43 +335,43 @@ function initialise(){
 function pauseGameDraw(){//Function which draws the card placed on game pause
 	ctx.fillStyle = "#000000";
 	ctx.globalAlpha = 0.6;
-	ctx.fillRect(canvasWidth-canvasWidth*0.73,canvasHeight-canvasHeight*0.8,600,300);
+	ctx.fillRect(canvasWidth-canvasWidth*0.73,canvasHeight-canvasHeight*0.8,500,300);
 	ctx.globalAlpha = 1;
 	ctx.fillStyle = "#FF0000";
 	ctx.font = "40px Trebuchet MS";
-	ctx.fillText("GAME PAUSED",canvasWidth-canvasWidth*0.59,canvasHeight-canvasHeight*0.65);
+	ctx.fillText("GAME PAUSED",canvasWidth-canvasWidth*0.62,canvasHeight-canvasHeight*0.65);
 	ctx.font = "30px Trebuchet MS";
 	ctx.fillStyle = "#FFFFFF";
-	ctx.fillText("Press P to resume",canvasWidth-canvasWidth*0.59,canvasHeight-canvasHeight*0.52);
-	ctx.fillText("Press R to restart",canvasWidth-canvasWidth*0.59,canvasHeight-canvasHeight*0.40);
+	ctx.fillText("Press P to resume",canvasWidth-canvasWidth*0.62,canvasHeight-canvasHeight*0.52);
+	ctx.fillText("Press R to restart",canvasWidth-canvasWidth*0.62,canvasHeight-canvasHeight*0.40);
 }
 
 function quitGameDraw(){//Function which draws the card placed on game quit
 	ctx.fillStyle = "#000000";
 	ctx.globalAlpha = 0.6;
-	ctx.fillRect(canvasWidth-canvasWidth*0.73,canvasHeight-canvasHeight*0.8,600,300);
+	ctx.fillRect(canvasWidth-canvasWidth*0.73,canvasHeight-canvasHeight*0.8,500,300);
 	ctx.globalAlpha = 1;
 	ctx.fillStyle = "#FF0000";
 	ctx.font = "40px Trebuchet MS";
-	ctx.fillText("Are you sure to Quit?",canvasWidth-canvasWidth*0.64,canvasHeight-canvasHeight*0.65);
+	ctx.fillText("Are you sure to Quit?",canvasWidth-canvasWidth*0.67,canvasHeight-canvasHeight*0.65);
 	ctx.font = "30px Trebuchet MS";
 	ctx.fillStyle = "#FFFFFF";
-	ctx.fillText("Press P to resume",canvasWidth-canvasWidth*0.59,canvasHeight-canvasHeight*0.52);
-	ctx.fillText("Press R to restart",canvasWidth-canvasWidth*0.59,canvasHeight-canvasHeight*0.40);
+	ctx.fillText("Press P to resume",canvasWidth-canvasWidth*0.62,canvasHeight-canvasHeight*0.52);
+	ctx.fillText("Press R to restart",canvasWidth-canvasWidth*0.62,canvasHeight-canvasHeight*0.40);
 }
 
 function gameOverDraw(){//end screen to draw on canvas when the game is over
 	ctx.fillStyle = "#000000";
 	ctx.globalAlpha = 0.6;
-	ctx.fillRect(canvasWidth-canvasWidth*0.73,canvasHeight-canvasHeight*0.8,600,300);
+	ctx.fillRect(canvasWidth-canvasWidth*0.73,canvasHeight-canvasHeight*0.8,500,300);
 	ctx.globalAlpha = 1;
 	ctx.fillStyle = "#FF0000";
 	ctx.font = "40px Trebuchet MS";
-	ctx.fillText("GAME OVER",canvasWidth-canvasWidth*0.59,canvasHeight-canvasHeight*0.65);
+	ctx.fillText("GAME OVER",canvasWidth-canvasWidth*0.61,canvasHeight-canvasHeight*0.65);
 	ctx.font = "30px Trebuchet MS";
 	ctx.fillStyle = "#FFFFFF";
-	ctx.fillText("Score : "+score,canvasWidth-canvasWidth*0.57,canvasHeight-canvasHeight*0.53);
-	ctx.fillText("Press R to restart",canvasWidth-canvasWidth*0.60,canvasHeight-canvasHeight*0.40);
+	ctx.fillText("Score : "+score,canvasWidth-canvasWidth*0.58,canvasHeight-canvasHeight*0.53);
+	ctx.fillText("Press R to restart",canvasWidth-canvasWidth*0.63,canvasHeight-canvasHeight*0.40);
 }
 
 
