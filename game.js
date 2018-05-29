@@ -14,6 +14,8 @@ var mouseX=50;
 var mouseY=100;
 var oldMouseX=100;
 var oldMouseY=300; 
+var heroX=mouseX;
+var heroY=mouseY;
 var radius=30;//Character's radius
 var score=0;
 var nWalls=6;//Number of walls to be generated initially
@@ -97,7 +99,11 @@ document.addEventListener("keydown",function(event){
 },false);
 
 canvas.addEventListener("mousedown",function(event){
-	mouseDown=true;
+	mouseX = event.clientX-243;
+	mouseY = event.clientY-126;
+	if(((mouseX>=heroX)&&(mouseX<heroX+heroWidth))&&((mouseY>=heroY)&&(mouseY<heroY+heroHeight))){
+		mouseDown=true;
+	}
 },false);
 
 
@@ -285,14 +291,16 @@ function drawTitleCard(){
 	ctx.fillText("WARNING: Don't ever dare to touch the walls",315,200);
 	ctx.fillStyle = "yellow";
 	ctx.font = "bold 30px Trebuchet MS";
-	ctx.fillText("Click mouse to move the character",300,270);
+	ctx.fillText("Click on the character and drag to move the character",180,270);
 	ctx.fillStyle = "white";
 	ctx.fillText("Press ENTER to start the game!",330,390);
 }
 
 function drawCharacter(){
 	ctx.clearRect(0,0,canvasWidth,canvasHeight);
-	ctx.drawImage(hero,48*p,72*q,48,72,mouseX,mouseY,heroWidth,heroHeight);
+	heroX = mouseX;
+	heroY = mouseY;
+	ctx.drawImage(hero,48*p,72*q,48,72,heroX,heroY,heroWidth,heroHeight);
 
 }
 
