@@ -22,6 +22,7 @@ var obstacleDist=90;
 var nTwoWalls=0;
 
 var enter=false;
+var mouseDown=false;
 var hasTwoWalls=false;
 var wallDist = 130;
 var collision=false; 
@@ -95,6 +96,15 @@ document.addEventListener("keydown",function(event){
 
 },false);
 
+canvas.addEventListener("mousedown",function(event){
+	mouseDown=true;
+},false);
+
+
+canvas.addEventListener("mouseup",function(event){
+	mouseDown=false;
+},false);
+
 function stopAudio(audio) {    //Function to stop audio the current audio from playing
     audio.pause();
     audio.currentTime = 0;
@@ -131,7 +141,7 @@ function circleRectangleCollision(circle,rect,side){
 }
 
 function readMouseMove(e){
-	if((pause==false&&gameOver==false)&&enter==true){
+	if((pause==false&&gameOver==false)&&(enter==true)&&(mouseDown==true)){
 		mouseX = e.clientX-243;
 		mouseY = e.clientY-126;
 		if(mouseX<0){
@@ -275,7 +285,7 @@ function drawTitleCard(){
 	ctx.fillText("WARNING: Don't ever dare to touch the walls",315,200);
 	ctx.fillStyle = "yellow";
 	ctx.font = "bold 30px Trebuchet MS";
-	ctx.fillText("Move mouse to move the character",300,270);
+	ctx.fillText("Click mouse to move the character",300,270);
 	ctx.fillStyle = "white";
 	ctx.fillText("Press ENTER to start the game!",330,390);
 }
