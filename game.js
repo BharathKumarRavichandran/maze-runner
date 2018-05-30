@@ -25,10 +25,10 @@ var radius=30;//Character's radius
 var score=0;//score of the character
 var level=1;//Hacker mode level>=1---Basic mode level=0
 var nWalls=6;//Number of walls to be generated initially
-var nHitman=3;//Number of Hitman generated initially
+var nHitman=6;//Number of Hitman generated initially
 var speed=3;//speed at which the obstacles approach the character
 var heroVelocity=3;
-var obstacleDist=90;
+var obstacleDist=190; 
 var nTwoWalls=0;
 
 var enter=false;
@@ -46,23 +46,26 @@ var hitmanArray = new Array();
 
 var x;
 var y;
-var side;
-var orient;
-var breadth=50;
-var length;
+var side;//stores north or south
+var orient;//orientation of hitman
+var n;//n order of hitman
+var breadth=50;//Breadth of wall obstacle 
+var length;//Length of wall obstacle
 var twoWallLength = 500;
 var i=0;
 var j=0;
 var k=0;
 var p=0;
 var q=2;
+var k=0;
+var l=0;
 var rand;
 var time=0;
 var inc=0.05;
 var heroWidth= 50;
 var heroHeight= 70;
-var hitmanWidth=50;
-var hitmanHeight=70;
+var hitmanWidth=55;
+var hitmanHeight=90;
 
 var hero = new Image();
 var hitmanImage = new Image();
@@ -290,7 +293,7 @@ function obstacle(x,y,breadth,length,side,hasTwoWalls){
 		}
 	}
 
-	this.heroWallCollide = function(){
+	this.heroWallCollide = function(){//for level 0 -- Basic mode
 		//Checking for normal walls
 		if(((mouseX+heroWidth>=this.x)&&(mouseX<=this.x+this.breadth))&&((mouseY<=this.y+this.length)&&(this.side=="north"))){
 			gameOver=true;
@@ -310,7 +313,7 @@ function obstacle(x,y,breadth,length,side,hasTwoWalls){
 		}
 	}
 
-	this.heroWallCollide1 = function(){
+	this.heroWallCollide1 = function(){//For level>0 -- Hacker mode
 		//Checking for normal walls(right side)
 		if(((heroX+heroWidth>=this.x)&&(heroX<=this.x))&&((heroY<=this.y+this.length)&&(this.side=="north"))){
 			if(heroY-(this.y+this.length)!=0){
@@ -376,15 +379,44 @@ function obstacle(x,y,breadth,length,side,hasTwoWalls){
 	}
 }
 
-function hitman(x,y,side,orient){
+function hitman(x,y,side,orient,n){
 	this.x = x;
 	this.y = y;
 	this.side = side;
 	this.orient = orient;
+	this.n=n;
+
+	this.update = function(){
+		if(this.x<-hitmanWidth){
+
+			if(this.n<(nWalls-1)&&obstacleArray[n+1].hasTwoWalls==true){
+				this.x=obstacleArray[n].x+obstacleArray[n].breadth+(Math.random()*((obstacleDist/2)-hitmanWidth+20));
+			}
+			else if(this.n==(nWalls-1)&&(obstacleArray[0].hasTwoWalls==true)){
+				this.x=obstacleArray[n].x+obstacleArray[n].breadth+(Math.random()*((obstacleDist/2)-hitmanWidth+20));
+			}
+			else{
+				this.x=obstacleArray[n].x+obstacleArray[n].breadth+(Math.random()*(obstacleDist-hitmanWidth));
+			}
+
+			if(this.side=="north"){
+				this.side="south";
+				y=0.53*canvasHeight+Math.random()*150;
+			}
+			else{
+				this.side="north";
+				y=0.05*canvasHeight+Math.random()*150;	
+			}
+		}
+	}
+
+	this.hitmanWallCollide = function(){
+
+	}
 }
 
 function obstaclePosition(i){
-	x = canvasWidth-190*i;
+	x = canvasWidth-obstacleDist*i;
 	x+=250;
 	hasTwoWalls=false;
 	if(i%2==0){
@@ -401,16 +433,53 @@ function obstaclePosition(i){
 }
 
 function hitmanPosition(i){
-	//hitmanArray.push(new hitman(x,y,side,orient));
+	n=i;
+	if(i<(nWalls-1)&&obstacleArray[i+1].hasTwoWalls==true){
+		x=obstacleArray[i].x+obstacleArray[i].breadth+(Math.random()*((obstacleDist/2)-hitmanWidth+20));
+	}
+	else if(i==(nWalls-1)&&(obstacleArray[0].hasTwoWalls==true)){
+		x=obstacleArray[i].x+obstacleArray[i].breadth+(Math.random()*((obstacleDist/2)-hitmanWidth+20));
+	}
+	else{
+		x=obstacleArray[i].x+obstacleArray[i].breadth+(Math.random()*(obstacleDist-hitmanWidth));
+	}
+	if(obstacleArray[i].side=="north"){//For north side hitman
+		side="north";
+		y=0.05*canvasHeight+Math.random()*150;
+		if(obstacleArray[i].hasTwoWalls==true){//If it has two wall,hitman can be at both north/south side
+			if(Math.random()>0.5){//For north side hitman
+				side="north";
+				y=0.05*canvasHeight+Math.random()*150;
+			}
+			else{//For north side hitman
+				side="south";
+				y=0.53*canvasHeight+Math.random()*150;
+			}
+		}
+	}
+	else{//For south side hitman
+		side="south";
+		y=0.53*canvasHeight+Math.random()*150;
+	}
+
+	if(Math.random()>0.4){
+		orient="horizontal";
+	}
+	else{
+		orient="vertical"
+	}
+	hitmanArray.push(new hitman(x,y,side,orient,n));
 }
 
 for(i=0;i<nWalls;i++){
 	obstaclePosition(i);
 }
 
-for(i=0;i<nHitman;i++){
-	//hitmanPosition(i);
-}
+if(level!=0){
+	for(i=0;i<nHitman;i++){
+		hitmanPosition(i);
+	}
+}	
 
 function drawTitleCard(){
 	ctx.fillStyle = "black";
@@ -420,7 +489,9 @@ function drawTitleCard(){
 	ctx.fillText("Maze Runner",380,120);
 	ctx.fillStyle = "red";
 	ctx.font = "23px Trebuchet MS";
-	ctx.fillText("WARNING: Don't ever dare to touch the walls",315,200);
+	if(level==0){
+		ctx.fillText("WARNING: Don't ever dare to touch the walls",315,200);
+	}	
 	ctx.fillStyle = "yellow";
 	ctx.font = "bold 27px Trebuchet MS";
 	if(level==0){
@@ -447,6 +518,11 @@ function drawCharacter(){
 function drawObstacles(x,y,breadth,length){
 	ctx.fillStyle = "#ff1744";
 	ctx.fillRect(x,y,breadth,length);
+}
+
+function drawHitman(x,y){
+	//ctx.clearRect(0,0,canvasWidth,canvasHeight);
+	ctx.drawImage(hitmanImage,64*k,64*l,64,64,x,y,hitmanWidth,hitmanHeight);
 }
 
 function obstaclesUpdate(){
@@ -476,6 +552,15 @@ function obstaclesUpdate(){
 		drawObstacles(obstacleArray[j].x,obstacleArray[j].y,obstacleArray[j].breadth,obstacleArray[j].length);
 		obstacleArray[j].x-=speed;
 	}
+}
+
+function hitmanUpdate(){
+	for(j=0;j<nHitman;j++){
+		hitmanArray[j].update();
+		drawHitman(hitmanArray[j].x,hitmanArray[j].y);
+		hitmanArray[j].x-=speed;
+	}
+
 }
 
 function scoreUpdate(){
@@ -536,8 +621,11 @@ function initialise(){
 	obstaclesUpdate();
 	scoreDraw();
 	healthmeterDraw();
-	levelDraw();
-	levelUpdate();
+	if(level!=0){
+		hitmanUpdate();	
+		levelDraw();
+		levelUpdate();
+	}
 }
 
 function pauseGameDraw(){//Function which draws the card placed on game pause
