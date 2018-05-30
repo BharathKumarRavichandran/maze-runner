@@ -47,11 +47,13 @@ var hitmanArray = new Array();
 var heroAnimVariable = new Array();
 
 var x;
+var x1;
 var y;
 var side;//stores north or south
 var orient;//orientation of hitman
 var direction;
 var n;//n order of hitman
+var n1;
 var breadth=50;//Breadth of wall obstacle 
 var length;//Length of wall obstacle
 var twoWallLength = 500;
@@ -68,7 +70,7 @@ var inc=0.05;
 var animVariable=0;
 var heroWidth= 50;
 var heroHeight= 70;
-var hitmanWidth=55;
+var hitmanWidth=65;
 var hitmanHeight=90;
 
 var hero = new Image();
@@ -410,6 +412,13 @@ function hitman(x,y,side,orient,direction,k,l,n){
 	this.n=n;
 	this.animVariable=animVariable;
 
+	if(this.n<(nWalls-1)){
+		n1=this.n+1;
+	}
+	else if(this.n==(nWalls-1)){
+		n1=0;
+	}
+
 	this.update = function(){
 
 		if(this.animVariable<6){//To control the hitman frame rate
@@ -419,12 +428,9 @@ function hitman(x,y,side,orient,direction,k,l,n){
 			this.animVariable=0;
 		}
 
-		if(this.x<-hitmanWidth){
-
-			if(this.n<(nWalls-1)&&obstacleArray[n+1].hasTwoWalls==true){
-				this.x=obstacleArray[n].x+obstacleArray[n].breadth+(Math.random()*((obstacleDist/2)-hitmanWidth+20));
-			}
-			else if(this.n==(nWalls-1)&&(obstacleArray[0].hasTwoWalls==true)){
+		if(this.x<-hitmanWidth){//If hitman goes less than x=0 coordinate
+			//Setting X-coordinate by checking two wall condns
+			if(obstacleArray[n1].hasTwoWalls==true){
 				this.x=obstacleArray[n].x+obstacleArray[n].breadth+(Math.random()*((obstacleDist/2)-hitmanWidth+20));
 			}
 			else{
@@ -451,11 +457,12 @@ function hitman(x,y,side,orient,direction,k,l,n){
 			}
 		}
 
-		if(this.y<=0){
+
+		if(this.y<=0){//If hitman goes out - less than y=0
 			this.direction="down";
 		}
 
-		if(this.y+hitmanHeight>=canvasHeight){
+		if(this.y+hitmanHeight>=canvasHeight){//If hitman goes out - more than canvasHeight
 			this.direction="up";
 		}
 
@@ -463,11 +470,46 @@ function hitman(x,y,side,orient,direction,k,l,n){
 			if(this.direction=="right"){//direction right
 				this.x+=hitmanVelocity;
 				this.l=3;
+				if((this.x+hitmanWidth>=obstacleArray[n1].x)&&((this.side==obstacleArray[n1].side)||(obstacleArray[n1].hasTwoWalls==true))){
+					this.direction="left";
+				}
+				
+				for(i=0;i<nWalls;i++){
+					x1=obstacleArray[i].x;
+					if((this.x+hitmanWidth>=x1)&&(this.x<x1)){
+						if(obstacleArray[i].hasTwoWalls==true){
+								this.direction="left";
+						}
+						else{
+							if(this.side==obstacleArray[i].side){
+								this.direction="left";
+							}
+						}
+					}
+				}
 			}
+			
 			else{//direction left
 				this.x-=hitmanVelocity;
 				this.l=1;
-			}
+				if(this.x<=obstacleArray[n].x+obstacleArray[n].breadth){
+					this.direction="right";
+				}
+
+				for(i=0;i<nWalls;i++){
+					x1=obstacleArray[i].x;
+					if(((this.x-x1+obstacleArray[i].breadth<1)&&(this.x+hitmanWidth>x1+obstacleArray[i].breadth))){
+						if(obstacleArray[i].hasTwoWalls==true){
+							this.direction="right";
+						}
+						else{
+							if(this.side==obstacleArray[i].side){
+								this.direction="right";
+							}
+						}
+					}
+				}
+			}	
 		}
 		else{
 			if(this.direction=="up"){//direction up
