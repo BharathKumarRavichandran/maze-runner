@@ -356,6 +356,24 @@ function obstacle(x,y,breadth,length,side,hasTwoWalls){
 			}
 		}
 	}
+
+	this.heroWallSqueeze = function(){
+		//Checking for normal walls(right side squeeze)
+		if(((heroX+heroWidth>=this.x)&&((heroX<=this.x)&&heroX<=0))&&((heroY<=this.y+this.length)&&(this.side=="north"))){
+			gameOver=true;
+		}
+
+		if(((heroX+heroWidth>=this.x)&&((heroX<=this.x)&&heroX<=0))&&((heroY+heroHeight>=this.y)&&(this.side=="south"))){
+			gameOver=true;
+		}
+
+		//Checking for extra wall in a Two wall system(right side squeeze)
+		if(this.hasTwoWalls==true){
+			if(((heroX+heroWidth>=this.x)&&((heroX<=this.x)&&heroX<=0))&&((heroY+heroHeight>=this.y+this.length+wallDist))){
+				gameOver=true;
+			}
+		}	
+	}
 }
 
 function hitman(x,y,side,orient){
@@ -453,6 +471,7 @@ function obstaclesUpdate(){
 		}
 		else{
 			obstacleArray[j].heroWallCollide1();
+			obstacleArray[j].heroWallSqueeze();
 		}
 		drawObstacles(obstacleArray[j].x,obstacleArray[j].y,obstacleArray[j].breadth,obstacleArray[j].length);
 		obstacleArray[j].x-=speed;
