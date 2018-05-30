@@ -26,6 +26,7 @@ var score=0;//score of the character
 var level=1;//Hacker mode level>=1---Basic mode level=0
 var nWalls=6;//Number of walls to be generated initially
 var nHitman=6;//Number of Hitman generated initially
+var nCurrentHitman=0;//Currently, number of hitman active
 var speed=3;//speed at which the obstacles approach the character
 var heroVelocity=3;
 var hitmanVelocity=1.2;
@@ -37,6 +38,7 @@ var mouseDown=false;
 var hasTwoWalls=false;
 var wallDist = 130;
 var collision=false; 
+var active=false;
 var pause=false;
 var quit=false;
 var gameOver=false;
@@ -75,9 +77,13 @@ var hitmanHeight=90;
 
 var hero = new Image();
 var hitmanImage = new Image();
+var heroProjectile = new Image();
+var hitmenProjectile = new Image();
 
 hero.src = "assets/hero.jpg";
 hitmanImage.src = "assets/hitman.png";
+heroProjectile.src = "assets/heroProjectile.png";
+hitmenProjectile.src = "assets/hitmenProjectile.png";
 
 var bgAudio1 = new Audio("audio/Surreal-Chase_Looping.mp3");
 var bgAudio2 = new Audio("audio/Puzzle-Game_Looping.mp3");
@@ -401,12 +407,13 @@ function obstacle(x,y,breadth,length,side,hasTwoWalls){
 	}
 }
 
-function hitman(x,y,side,orient,direction,k,l,n){
+function hitman(x,y,side,orient,direction,active,k,l,n){
 	this.x = x;
 	this.y = y;
 	this.side = side;
 	this.orient = orient;
 	this.direction = direction;
+	this.active = active;
 	this.k=k;
 	this.l=l;
 	this.n=n;
@@ -439,11 +446,11 @@ function hitman(x,y,side,orient,direction,k,l,n){
 
 			if(this.side=="north"){
 				this.side="south";
-				y=0.53*canvasHeight+Math.random()*150;
+				y=0.53*canvasHeight+Math.random()*100;
 			}
 			else{
 				this.side="north";
-				y=0.05*canvasHeight+Math.random()*150;	
+				y=0.05*canvasHeight+Math.random()*100;	
 			}
 		}
 
@@ -473,7 +480,7 @@ function hitman(x,y,side,orient,direction,k,l,n){
 				if((this.x+hitmanWidth>=obstacleArray[n1].x)&&((this.side==obstacleArray[n1].side)||(obstacleArray[n1].hasTwoWalls==true))){
 					this.direction="left";
 				}
-				
+
 				for(i=0;i<nWalls;i++){
 					x1=obstacleArray[i].x;
 					if((this.x+hitmanWidth>=x1)&&(this.x<x1)){
@@ -511,7 +518,7 @@ function hitman(x,y,side,orient,direction,k,l,n){
 				}
 			}	
 		}
-		else{
+		else{//vertical orient 
 			if(this.direction=="up"){//direction up
 				this.y-=hitmanVelocity;
 				this.l=0;
@@ -520,11 +527,18 @@ function hitman(x,y,side,orient,direction,k,l,n){
 				this.y+=hitmanVelocity;
 				this.l=2;
 			}
+
+			if(this.direction=="up"){
+				if((this.y-(obstacleArray[n1].y+obstacleArray[n1].length)<0.5)&&(obstacleArray[n1].side=="north")){
+					this.direction="down";
+				}
+			}
+			else{
+				if(((obstacleArray[n1].y)-(this.y+hitmanHeight)<0.5)&&(obstacleArray[n1].side=="south")){
+					this.direction="up";
+				}
+			}
 		}
-
-	}
-
-	this.hitmanWallCollide = function(){
 
 	}
 }
@@ -536,7 +550,7 @@ function obstaclePosition(i){
 	if(i%2==0){
 		side="north";
 		y=0;
-		length = 270+Math.random()*100;
+		length = 240+Math.random()*100;
 	}
 	else{
 		side="south";
@@ -549,11 +563,20 @@ function obstaclePosition(i){
 function hitmanPosition(i){
 	animVariable=0;
 	n=i;
+
+	if(n==0||n==2||n==5){
+		active=true;
+		nCurrentHitman++;
+	}
+	else{
+		active=false;
+	}
+
 	if(i<(nWalls-1)&&obstacleArray[i+1].hasTwoWalls==true){
-		x=obstacleArray[i].x+obstacleArray[i].breadth+(Math.random()*((obstacleDist/2)-hitmanWidth+20));
+		x=obstacleArray[i].x+obstacleArray[i].breadth+(Math.random()*((obstacleDist/2)-hitmanWidth));
 	}
 	else if(i==(nWalls-1)&&(obstacleArray[0].hasTwoWalls==true)){
-		x=obstacleArray[i].x+obstacleArray[i].breadth+(Math.random()*((obstacleDist/2)-hitmanWidth+20));
+		x=obstacleArray[i].x+obstacleArray[i].breadth+(Math.random()*((obstacleDist/2)-hitmanWidth));
 	}
 	else{
 		x=obstacleArray[i].x+obstacleArray[i].breadth+(Math.random()*(obstacleDist-hitmanWidth));
@@ -568,13 +591,13 @@ function hitmanPosition(i){
 			}
 			else{//For north side hitman
 				side="south";
-				y=0.53*canvasHeight+Math.random()*150;
+				y=0.53*canvasHeight+Math.random()*180;
 			}
 		}
 	}
 	else{//For south side hitman
 		side="south";
-		y=0.53*canvasHeight+Math.random()*150;
+		y=0.53*canvasHeight+Math.random()*180;
 	}
 
 	if(Math.random()>0.4){
@@ -587,7 +610,7 @@ function hitmanPosition(i){
 		direction="up";
 		l=0;
 	}
-	hitmanArray.push(new hitman(x,y,side,orient,direction,k,l,n,animVariable));
+	hitmanArray.push(new hitman(x,y,side,orient,direction,active,k,l,n,animVariable));
 }
 
 for(i=0;i<nWalls;i++){
@@ -639,9 +662,10 @@ function drawObstacles(x,y,breadth,length){
 	ctx.fillRect(x,y,breadth,length);
 }
 
-function drawHitman(x,y,k,l){
-	//ctx.clearRect(0,0,canvasWidth,canvasHeight);
-	ctx.drawImage(hitmanImage,64*k,64*l,64,64,x,y,hitmanWidth,hitmanHeight);
+function drawHitman(x,y,active,k,l){
+	if(active==true){
+		ctx.drawImage(hitmanImage,64*k,64*l,64,64,x,y,hitmanWidth,hitmanHeight);
+	}
 }
 
 function obstaclesUpdate(){
@@ -676,7 +700,7 @@ function obstaclesUpdate(){
 function hitmanUpdate(){
 	for(j=0;j<nHitman;j++){
 		hitmanArray[j].update();
-		drawHitman(hitmanArray[j].x,hitmanArray[j].y,hitmanArray[j].k,hitmanArray[j].l);
+		drawHitman(hitmanArray[j].x,hitmanArray[j].y,hitmanArray[j].active,hitmanArray[j].k,hitmanArray[j].l);
 		hitmanArray[j].x-=speed;
 	}
 
