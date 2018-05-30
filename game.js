@@ -146,6 +146,11 @@ canvas.addEventListener("mousedown",function(event){
 	}
 },false);
 
+
+canvas.addEventListener("click",function(event){
+
+},false);
+
 function stopAudio(audio) {    //Function to stop audio the current audio from playing
     audio.pause();
     audio.currentTime = 0;
@@ -291,6 +296,73 @@ function readMouseMove(e){
 	}
 }
 
+function characterWallCollide(charX,charY,charWidth,charHeight,wallX,wallY,wallSide,wallLength,wallBreadth,hasTwoWalls,char){
+		//Checking for normal walls(right side)
+		if(((charX+charWidth>=wallX)&&(charX<=wallX))&&((charY<=wallY+wallLength)&&(wallSide=="north"))){
+			if(charY-(wallY+wallLength)!=0){
+				if(char=="hero"){
+					charX = wallX-charWidth;
+				}
+			}
+		}
+
+		if(((charX+charWidth>=wallX)&&(charX<=wallX))&&((charY+charHeight>=wallY)&&(wallSide=="south"))){
+			if(charY+charHeight-wallY!=0){
+				if(char=="hero"){
+					charX = wallX-charWidth;
+				}
+			}
+		}
+		
+		//Checking for normal walls(left side)
+		if(((charX-(wallX+wallBreadth)<0)&&(charX>wallX))&&((charY<=wallY+wallLength)&&(wallSide=="north"))){
+			if(charY-(wallY+wallLength)!=0){
+				if(char=="hero"){
+					charX = wallX+wallBreadth+2;
+				}
+			}	
+		}
+		if(((charX-(wallX+wallBreadth)<0)&&(charX>wallX))&&((charY+charHeight>=wallY)&&(wallSide=="south"))){
+			if(charY+charHeight-wallY!=0){
+				if(char=="hero"){
+					charX = wallX+wallBreadth+2;
+				}
+			}	
+		}
+
+		//Checking for normal walls(top and bottom side)
+		if(((charX+charWidth>=wallX)&&(charX<=wallX+wallBreadth))&&((charY-(wallY+wallLength)==0)&&(wallSide=="north"))){//North wall's bottom condn
+			if(char=="hero"){
+				charY = wallY+wallLength;
+			}
+		}
+		if(((charX+charWidth>=wallX)&&(charX<=wallX+wallBreadth))&&((charY+charHeight-wallY==0)&&(wallSide=="south"))){//South wall's top condn
+			if(char=="hero"){
+				charY = wallY-charHeight;
+			}
+		}
+
+		//Checking for extra wall in a Two wall system
+		if(hasTwoWalls==true){
+			if(((charX+charWidth>=wallX)&&(charX<=wallX))&&((charY+charHeight>=wallY+wallLength+wallDist))){
+				if(charY+charHeight-wallY!=0){
+					if(char=="hero"){
+						charX = wallX-charWidth;
+					}
+				}
+			}
+			if(((charX-(wallX+wallBreadth)<0)&&(charX>wallX))&&((charY+charHeight>=wallY+wallLength+wallDist))){
+				if(char=="hero"){
+					charX = wallX+wallBreadth+2;	
+				}
+			}
+		}
+		if(char=="hero"){
+			heroX=charX;
+			heroY=charY
+		}
+}
+
 function obstacle(x,y,breadth,length,side,hasTwoWalls){
 	this.x=x;
 	this.y=y;
@@ -342,50 +414,7 @@ function obstacle(x,y,breadth,length,side,hasTwoWalls){
 	}
 
 	this.heroWallCollide1 = function(){//For level>0 -- Hacker mode
-		//Checking for normal walls(right side)
-		if(((heroX+heroWidth>=this.x)&&(heroX<=this.x))&&((heroY<=this.y+this.length)&&(this.side=="north"))){
-			if(heroY-(this.y+this.length)!=0){
-				heroX = this.x-heroWidth;
-			}
-		}
-
-		if(((heroX+heroWidth>=this.x)&&(heroX<=this.x))&&((heroY+heroHeight>=this.y)&&(this.side=="south"))){
-			if(heroY+heroHeight-this.y!=0){
-				heroX = this.x-heroWidth;
-			}
-		}
-		
-		//Checking for normal walls(left side)
-		if(((heroX-(this.x+this.breadth)<0)&&(heroX>this.x))&&((heroY<=this.y+this.length)&&(this.side=="north"))){
-			if(heroY-(this.y+this.length)!=0){
-				heroX = this.x+this.breadth+2;
-			}	
-		}
-		if(((heroX-(this.x+this.breadth)<0)&&(heroX>this.x))&&((heroY+heroHeight>=this.y)&&(this.side=="south"))){
-			if(heroY+heroHeight-this.y!=0){
-				heroX = this.x+this.breadth+2;
-			}	
-		}
-
-		//Checking for normal walls(top and bottom side)
-		if(((heroX+heroWidth>=this.x)&&(heroX<=this.x+this.breadth))&&((heroY-(this.y+this.length)==0)&&(this.side=="north"))){//North wall's bottom condn
-			heroY = this.y+this.length;
-		}
-		if(((heroX+heroWidth>=this.x)&&(heroX<=this.x+this.breadth))&&((heroY+heroHeight-this.y==0)&&(this.side=="south"))){//South wall's top condn
-			heroY = this.y-heroHeight;
-		}
-
-		//Checking for extra wall in a Two wall system
-		if(this.hasTwoWalls==true){
-			if(((heroX+heroWidth>=this.x)&&(heroX<=this.x))&&((heroY+heroHeight>=this.y+this.length+wallDist))){
-				if(heroY+heroHeight-this.y!=0){
-					heroX = this.x-heroWidth;
-				}
-			}
-			if(((heroX-(this.x+this.breadth)<0)&&(heroX>this.x))&&((heroY+heroHeight>=this.y+this.length+wallDist))){
-				heroX = this.x+this.breadth+2;	
-			}
-		}
+		characterWallCollide(heroX,heroY,heroWidth,heroHeight,this.x,this.y,this.side,this.length,this.breadth,this.hasTwoWalls,"hero");
 	}
 
 	this.heroWallSqueeze = function(){
