@@ -309,6 +309,53 @@ function obstacle(x,y,breadth,length,side,hasTwoWalls){
 			}
 		}
 	}
+
+	this.heroWallCollide1 = function(){
+		//Checking for normal walls(right side)
+		if(((heroX+heroWidth>=this.x)&&(heroX<=this.x))&&((heroY<=this.y+this.length)&&(this.side=="north"))){
+			if(heroY-(this.y+this.length)!=0){
+				heroX = this.x-heroWidth;
+			}
+		}
+
+		if(((heroX+heroWidth>=this.x)&&(heroX<=this.x))&&((heroY+heroHeight>=this.y)&&(this.side=="south"))){
+			if(heroY+heroHeight-this.y!=0){
+				heroX = this.x-heroWidth;
+			}
+		}
+		
+		//Checking for normal walls(left side)
+		if(((heroX-(this.x+this.breadth)<0)&&(heroX>this.x))&&((heroY<=this.y+this.length)&&(this.side=="north"))){
+			if(heroY-(this.y+this.length)!=0){
+				heroX = this.x+this.breadth+2;
+			}	
+		}
+		if(((heroX-(this.x+this.breadth)<0)&&(heroX>this.x))&&((heroY+heroHeight>=this.y)&&(this.side=="south"))){
+			if(heroY+heroHeight-this.y!=0){
+				heroX = this.x+this.breadth+2;
+			}	
+		}
+
+		//Checking for normal walls(top and bottom side)
+		if(((heroX+heroWidth>=this.x)&&(heroX<=this.x+this.breadth))&&((heroY-(this.y+this.length)==0)&&(this.side=="north"))){//North wall's bottom condn
+			heroY = this.y+this.length;
+		}
+		if(((heroX+heroWidth>=this.x)&&(heroX<=this.x+this.breadth))&&((heroY+heroHeight-this.y==0)&&(this.side=="south"))){//South wall's top condn
+			heroY = this.y-heroHeight;
+		}
+
+		//Checking for extra wall in a Two wall system
+		if(this.hasTwoWalls==true){
+			if(((heroX+heroWidth>=this.x)&&(heroX<=this.x))&&((heroY+heroHeight>=this.y+this.length+wallDist))){
+				if(heroY+heroHeight-this.y!=0){
+					heroX = this.x-heroWidth;
+				}
+			}
+			if(((heroX-(this.x+this.breadth)<0)&&(heroX>this.x))&&((heroY+heroHeight>=this.y+this.length+wallDist))){
+				heroX = this.x+this.breadth+2;	
+			}
+		}
+	}
 }
 
 function hitman(x,y,side,orient){
@@ -358,8 +405,13 @@ function drawTitleCard(){
 	ctx.fillText("WARNING: Don't ever dare to touch the walls",315,200);
 	ctx.fillStyle = "yellow";
 	ctx.font = "bold 27px Trebuchet MS";
-	ctx.fillText("Click on the character at first ",340,270);
-	ctx.fillText("then move the cursor to move the character",250,320);
+	if(level==0){
+		ctx.fillText("Click on the character at first ",340,270);
+		ctx.fillText("then move the cursor to move the character",250,320);
+	}
+	else{
+
+	}	
 	ctx.fillStyle = "white";
 	ctx.font = "bold 30px Trebuchet MS";
 	ctx.fillText("Press ENTER to start the game!",330,390);
@@ -399,6 +451,9 @@ function obstaclesUpdate(){
 		if(level==0){
 			obstacleArray[j].heroWallCollide();
 		}
+		else{
+			obstacleArray[j].heroWallCollide1();
+		}
 		drawObstacles(obstacleArray[j].x,obstacleArray[j].y,obstacleArray[j].breadth,obstacleArray[j].length);
 		obstacleArray[j].x-=speed;
 	}
@@ -435,22 +490,22 @@ function levelUpdate(){
 	if(score>500){
 		level=2;
 		speed=1.6;
-		heroVelocity=3.3;
+		heroVelocity=3.6;
 	}
 	else if(score>1000){
 		level=3;
 		speed=2;
-		heroVelocity=3.6;
+		heroVelocity=3.9;
 	}
 	else if(score>1500){
 		level=4;
 		speed=2.3;
-		heroVelocity=3.9;
+		heroVelocity=4.3;
 	}
 	else if(score>2000){
 		level=5;
 		speed=2.7;
-		heroVelocity=4.2;
+		heroVelocity=5;
 	}	
 	else if(score>2500){
 		gameCompleteDraw();
