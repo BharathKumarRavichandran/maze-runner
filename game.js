@@ -17,10 +17,19 @@ var oldMouseX=100;
 var oldMouseY=300; 
 var oldHeroX=100;
 var oldHeroY=300;
+var animVariable=0;
+var heroWidth= 50;
+var heroHeight= 70;
+var hitmanWidth=65;
+var hitmanHeight=90;
+var projectileWidth=30;
+var projectileHeight=30;
 var heroX=mouseX;
 var heroY=mouseY;
 var hitmanX;
 var hitmanY;
+var heroProjectileX=heroX+heroWidth;
+var heroProjectileY=heroY+heroHeight/2;
 var radius=30;//Character's radius
 var score=0;//score of the character
 var level=1;//Hacker mode level>=1---Basic mode level=0
@@ -30,6 +39,8 @@ var nCurrentHitman=0;//Currently, number of hitman active
 var speed=3;//speed at which the obstacles approach the character
 var heroVelocity=3;
 var hitmanVelocity=1.2;
+var projectileVelocity=4;
+var heroProjDir="right";
 var obstacleDist=190; 
 var nTwoWalls=0;
 
@@ -39,6 +50,8 @@ var hasTwoWalls=false;
 var wallDist = 130;
 var collision=false; 
 var active=false;
+var heroFire=false;
+var heroFireAllowed=true;
 var pause=false;
 var quit=false;
 var gameOver=false;
@@ -69,11 +82,6 @@ var l=0;
 var rand;
 var time=0;
 var inc=0.05;
-var animVariable=0;
-var heroWidth= 50;
-var heroHeight= 70;
-var hitmanWidth=65;
-var hitmanHeight=90;
 
 var hero = new Image();
 var hitmanImage = new Image();
@@ -82,8 +90,8 @@ var hitmenProjectile = new Image();
 
 hero.src = "assets/hero.jpg";
 hitmanImage.src = "assets/hitman.png";
-heroProjectile.src = "assets/heroProjectile.png";
-hitmenProjectile.src = "assets/hitmenProjectile.png";
+heroProjectile.src = "assets/heroProjectile1.png";
+hitmenProjectile.src = "assets/hitmenProjectile1.png";
 
 var bgAudio1 = new Audio("audio/Surreal-Chase_Looping.mp3");
 var bgAudio2 = new Audio("audio/Puzzle-Game_Looping.mp3");
@@ -148,6 +156,32 @@ canvas.addEventListener("mousedown",function(event){
 
 
 canvas.addEventListener("click",function(event){
+	
+	if(heroFireAllowed==true){	
+		heroFireAllowed=false;
+		heroFire=true;
+
+		if(q==0){
+			heroProjDir="down";
+			heroProjectileX=heroX+heroWidth/2;
+			heroProjectileY=heroY+heroHeight;
+		}
+		else if(q==1){
+			heroProjDir="left";
+			heroProjectileX=heroX;
+			heroProjectileY=heroY+heroHeight/2;
+		}
+		else if(q==2){
+			heroProjDir="right";
+			heroProjectileX=heroX+heroWidth;
+			heroProjectileY=heroY+heroHeight/2;
+		}
+		else if(q==3){
+			heroProjDir="up";
+			heroProjectileX=heroX+heroWidth/2;
+			heroProjectileY=heroY;
+		}
+	}	
 
 },false);
 
@@ -684,6 +718,9 @@ function drawCharacter(){
 		heroY=mouseY;
 	}
 	ctx.drawImage(hero,48*p,72*q,48,72,heroX,heroY,heroWidth,heroHeight);
+	if(heroFire==true&&heroFireAllowed==false){
+		drawHeroProjectile();
+	}
 }
 
 function drawObstacles(x,y,breadth,length){
@@ -695,6 +732,10 @@ function drawHitman(x,y,active,k,l){
 	if(active==true){
 		ctx.drawImage(hitmanImage,64*k,64*l,64,64,x,y,hitmanWidth,hitmanHeight);
 	}
+}
+
+function drawHeroProjectile(){
+	ctx.drawImage(heroProjectile,heroProjectileX,heroProjectileY,projectileWidth,projectileHeight);
 }
 
 function obstaclesUpdate(){
@@ -733,6 +774,31 @@ function hitmanUpdate(){
 		hitmanArray[j].x-=speed;
 	}
 
+}
+
+function heroProjectileUpdate(){
+	if(heroFire==true){
+		heroProjectileX-=speed;
+
+		if(heroProjDir=="right"){
+			heroProjectileX+=projectileVelocity;
+		}
+		else if(heroProjDir=="left"){
+			heroProjectileX-=projectileVelocity;
+		}
+		else if(heroProjDir=="up"){
+			heroProjectileY-=projectileVelocity;
+		}
+		else if(heroProjDir=="down"){
+			heroProjectileY+=projectileVelocity;
+		}
+
+		if(heroProjectileX<=0||heroProjectileX>=canvasWidth||heroProjectileY<=0||heroProjectileY>=canvasHeight){
+			heroFire=false;
+			heroFireAllowed=true;
+		}
+
+	}
 }
 
 function scoreUpdate(){
@@ -794,7 +860,8 @@ function initialise(){
 	scoreDraw();
 	healthmeterDraw();
 	if(level!=0){
-		hitmanUpdate();	
+		hitmanUpdate();
+		heroProjectileUpdate();	
 		levelDraw();
 		levelUpdate();
 	}
