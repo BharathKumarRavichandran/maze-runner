@@ -28,6 +28,7 @@ var nWalls=6;//Number of walls to be generated initially
 var nHitman=6;//Number of Hitman generated initially
 var speed=3;//speed at which the obstacles approach the character
 var heroVelocity=3;
+var hitmanVelocity=1.2;
 var obstacleDist=190; 
 var nTwoWalls=0;
 
@@ -43,11 +44,13 @@ var gameOver=false;
 var obstacleArray = new Array();
 var twoWall = new Array();
 var hitmanArray = new Array();
+var heroAnimVariable = new Array();
 
 var x;
 var y;
 var side;//stores north or south
 var orient;//orientation of hitman
+var direction;
 var n;//n order of hitman
 var breadth=50;//Breadth of wall obstacle 
 var length;//Length of wall obstacle
@@ -62,6 +65,7 @@ var l=0;
 var rand;
 var time=0;
 var inc=0.05;
+var animVariable=0;
 var heroWidth= 50;
 var heroHeight= 70;
 var hitmanWidth=55;
@@ -86,6 +90,10 @@ if(level==0){//For Basic mode
 }
 else{//For Hacker mode
 	speed=1.3;
+}
+
+for(i=0;i<4;i++){
+	heroAnimVariable[i]=0;
 }
 
 document.onmousemove = readMouseMove;
@@ -205,39 +213,48 @@ function readMouseMove(e){
 		}
 		if(mouseX>oldMouseX){
 			q=2;
-			if(p<2){
-				p++;
-			}
-			else{
-				p=0;
-			}
+			if(heroAnimVariable[0]%6==0){//hitman frame rate control condn
+				if(p<2){
+					p++;
+				}
+				else{
+					p=0;
+				}
+			}	
 		}
+
 		if(mouseX<oldMouseX){
 			q=1;
-			if(p<2){
-				p++;
-			}
-			else{
-				p=0;
-			}
+			if(heroAnimVariable[1]%6==0){//hitman frame rate control condn
+				if(p<2){
+					p++;
+				}
+				else{
+					p=0;
+				}
+			}	
 		}
 		if(mouseY>oldMouseY){
 			q=0;
-			if(p<2){
-				p++;
-			}
-			else{
-				p=0;
-			}
+			if(heroAnimVariable[2]%6==0){//hitman frame rate control condn
+				if(p<2){
+					p++;
+				}
+				else{
+					p=0;
+				}
+			}	
 		}
 		if(mouseY<oldMouseY){
 			q=3;
-			if(p<2){
-				p++;
-			}
-			else{
-				p=0;
-			}
+			if(heroAnimVariable[3]%6==0){//hitman frame rate control condn
+				if(p<2){
+					p++;
+				}
+				else{
+					p=0;
+				}
+			}	
 		}
 		if(level!=0){
 			if(mouseX>heroX){
@@ -259,6 +276,9 @@ function readMouseMove(e){
 		oldMouseY=mouseY;
 		oldHeroX=heroX;
 		oldHeroY=heroY;
+		for(i=0;i<4;i++){//To control the hero frame rate
+			heroAnimVariable[i]++;
+		}
 		drawCharacter();
 	}
 }
@@ -379,14 +399,26 @@ function obstacle(x,y,breadth,length,side,hasTwoWalls){
 	}
 }
 
-function hitman(x,y,side,orient,n){
+function hitman(x,y,side,orient,direction,k,l,n){
 	this.x = x;
 	this.y = y;
 	this.side = side;
 	this.orient = orient;
+	this.direction = direction;
+	this.k=k;
+	this.l=l;
 	this.n=n;
+	this.animVariable=animVariable;
 
 	this.update = function(){
+
+		if(this.animVariable<6){//To control the hitman frame rate
+			this.animVariable++;
+		}
+		else{
+			this.animVariable=0;
+		}
+
 		if(this.x<-hitmanWidth){
 
 			if(this.n<(nWalls-1)&&obstacleArray[n+1].hasTwoWalls==true){
@@ -408,6 +440,46 @@ function hitman(x,y,side,orient,n){
 				y=0.05*canvasHeight+Math.random()*150;	
 			}
 		}
+
+		//Hitman Animation
+		if((this.animVariable%6)==0){//To control the hitman frame rate
+			if(this.k<9){
+				this.k++;
+			}
+			else{
+				this.k=0;
+			}
+		}
+
+		if(this.y<=0){
+			this.direction="down";
+		}
+
+		if(this.y+hitmanHeight>=canvasHeight){
+			this.direction="up";
+		}
+
+		if(this.orient=="horizontal"){
+			if(this.direction=="right"){//direction right
+				this.x+=hitmanVelocity;
+				this.l=3;
+			}
+			else{//direction left
+				this.x-=hitmanVelocity;
+				this.l=1;
+			}
+		}
+		else{
+			if(this.direction=="up"){//direction up
+				this.y-=hitmanVelocity;
+				this.l=0;
+			}
+			else{//direction down
+				this.y+=hitmanVelocity;
+				this.l=2;
+			}
+		}
+
 	}
 
 	this.hitmanWallCollide = function(){
@@ -433,6 +505,7 @@ function obstaclePosition(i){
 }
 
 function hitmanPosition(i){
+	animVariable=0;
 	n=i;
 	if(i<(nWalls-1)&&obstacleArray[i+1].hasTwoWalls==true){
 		x=obstacleArray[i].x+obstacleArray[i].breadth+(Math.random()*((obstacleDist/2)-hitmanWidth+20));
@@ -464,11 +537,15 @@ function hitmanPosition(i){
 
 	if(Math.random()>0.4){
 		orient="horizontal";
+		direction="right";
+		l=3;
 	}
 	else{
-		orient="vertical"
+		orient="vertical";
+		direction="up";
+		l=0;
 	}
-	hitmanArray.push(new hitman(x,y,side,orient,n));
+	hitmanArray.push(new hitman(x,y,side,orient,direction,k,l,n,animVariable));
 }
 
 for(i=0;i<nWalls;i++){
@@ -520,7 +597,7 @@ function drawObstacles(x,y,breadth,length){
 	ctx.fillRect(x,y,breadth,length);
 }
 
-function drawHitman(x,y){
+function drawHitman(x,y,k,l){
 	//ctx.clearRect(0,0,canvasWidth,canvasHeight);
 	ctx.drawImage(hitmanImage,64*k,64*l,64,64,x,y,hitmanWidth,hitmanHeight);
 }
@@ -557,7 +634,7 @@ function obstaclesUpdate(){
 function hitmanUpdate(){
 	for(j=0;j<nHitman;j++){
 		hitmanArray[j].update();
-		drawHitman(hitmanArray[j].x,hitmanArray[j].y);
+		drawHitman(hitmanArray[j].x,hitmanArray[j].y,hitmanArray[j].k,hitmanArray[j].l);
 		hitmanArray[j].x-=speed;
 	}
 
