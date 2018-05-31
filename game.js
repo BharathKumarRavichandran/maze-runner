@@ -30,6 +30,8 @@ var hitmanX;
 var hitmanY;
 var heroProjectileX=heroX+heroWidth;
 var heroProjectileY=heroY+heroHeight/2;
+var hitmenProjectileX;
+var hitmenProjectileY;
 var radius=30;//Character's radius
 var score=0;//score of the character
 var level=1;//Hacker mode level>=1---Basic mode level=0
@@ -337,6 +339,10 @@ function characterWallCollide(charX,charY,charWidth,charHeight,wallX,wallY,wallS
 				if(char=="hero"){
 					charX = wallX-charWidth;
 				}
+				if(char=="projectile"){
+					heroFire=false;
+					heroFireAllowed=true;
+				}
 			}
 		}
 
@@ -344,6 +350,10 @@ function characterWallCollide(charX,charY,charWidth,charHeight,wallX,wallY,wallS
 			if(charY+charHeight-wallY!=0){
 				if(char=="hero"){
 					charX = wallX-charWidth;
+				}
+				if(char=="projectile"){
+					heroFire=false;
+					heroFireAllowed=true;
 				}
 			}
 		}
@@ -354,12 +364,20 @@ function characterWallCollide(charX,charY,charWidth,charHeight,wallX,wallY,wallS
 				if(char=="hero"){
 					charX = wallX+wallBreadth+2;
 				}
+				if(char=="projectile"){
+					heroFire=false;
+					heroFireAllowed=true;
+				}
 			}	
 		}
 		if(((charX-(wallX+wallBreadth)<0)&&(charX>wallX))&&((charY+charHeight>=wallY)&&(wallSide=="south"))){
 			if(charY+charHeight-wallY!=0){
 				if(char=="hero"){
 					charX = wallX+wallBreadth+2;
+				}
+				if(char=="projectile"){
+					heroFire=false;
+					heroFireAllowed=true;
 				}
 			}	
 		}
@@ -369,11 +387,19 @@ function characterWallCollide(charX,charY,charWidth,charHeight,wallX,wallY,wallS
 			if(char=="hero"){
 				charY = wallY+wallLength;
 			}
+			if(char=="projectile"){
+					heroFire=false;
+					heroFireAllowed=true;
+				}
 		}
 		if(((charX+charWidth>=wallX)&&(charX<=wallX+wallBreadth))&&((charY+charHeight-wallY==0)&&(wallSide=="south"))){//South wall's top condn
 			if(char=="hero"){
 				charY = wallY-charHeight;
 			}
+			if(char=="projectile"){
+					heroFire=false;
+					heroFireAllowed=true;
+				}
 		}
 
 		//Checking for extra wall in a Two wall system
@@ -383,11 +409,19 @@ function characterWallCollide(charX,charY,charWidth,charHeight,wallX,wallY,wallS
 					if(char=="hero"){
 						charX = wallX-charWidth;
 					}
+					if(char=="projectile"){
+					heroFire=false;
+					heroFireAllowed=true;
+					}
 				}
 			}
 			if(((charX-(wallX+wallBreadth)<0)&&(charX>wallX))&&((charY+charHeight>=wallY+wallLength+wallDist))){
 				if(char=="hero"){
 					charX = wallX+wallBreadth+2;	
+				}
+				if(char=="projectile"){
+					heroFire=false;
+					heroFireAllowed=true;
 				}
 			}
 		}
@@ -449,6 +483,10 @@ function obstacle(x,y,breadth,length,side,hasTwoWalls){
 
 	this.heroWallCollide1 = function(){//For level>0 -- Hacker mode
 		characterWallCollide(heroX,heroY,heroWidth,heroHeight,this.x,this.y,this.side,this.length,this.breadth,this.hasTwoWalls,"hero");
+	}
+
+	this.heroProjectileWallCollide = function(){
+		characterWallCollide(heroProjectileX,heroProjectileY,projectileWidth,projectileHeight,this.x,this.y,this.side,this.length,this.breadth,this.hasTwoWalls,"projectile");
 	}
 
 	this.heroWallSqueeze = function(){
@@ -738,6 +776,10 @@ function drawHeroProjectile(){
 	ctx.drawImage(heroProjectile,heroProjectileX,heroProjectileY,projectileWidth,projectileHeight);
 }
 
+function drawHitmenProjectile(hitmenProjectileX,hitmenProjectileY){
+	ctx.drawImage(hitmenProjectile,hitmenProjectileX,hitmenProjectileY,projectileWidth,projectileHeight);
+}
+
 function obstaclesUpdate(){
 	if(nTwoWalls==0){
 		rand = Math.random();
@@ -761,6 +803,9 @@ function obstaclesUpdate(){
 		else{
 			obstacleArray[j].heroWallCollide1();
 			obstacleArray[j].heroWallSqueeze();
+			if(heroFire==true&&heroFireAllowed==false){
+				obstacleArray[j].heroProjectileWallCollide();
+			}
 		}
 		drawObstacles(obstacleArray[j].x,obstacleArray[j].y,obstacleArray[j].breadth,obstacleArray[j].length);
 		obstacleArray[j].x-=speed;
@@ -797,6 +842,7 @@ function heroProjectileUpdate(){
 			heroFire=false;
 			heroFireAllowed=true;
 		}
+
 
 	}
 }
