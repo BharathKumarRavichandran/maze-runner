@@ -30,8 +30,8 @@ var hitmanX;
 var hitmanY;
 var heroProjectileX=heroX+heroWidth;
 var heroProjectileY=heroY+heroHeight/2;
-var hitmenProjectileX;
-var hitmenProjectileY;
+var hitmanProjectileX;
+var hitmanProjectileY;
 var radius=30;//Character's radius
 var score=0;//score of the character
 var level=1;//Hacker mode level>=1---Basic mode level=0
@@ -40,6 +40,8 @@ var nHitman=6;//Number of Hitman generated initially
 var nCurrentHitman=0;//Currently, number of hitman active
 var speed=3;//speed at which the obstacles approach the character
 var heroVelocity=3;
+var heroShot=0;
+var hitmanShot=0;
 var hitmanVelocity=1.2;
 var projectileVelocity=4;
 var heroProjDir="right";
@@ -54,6 +56,9 @@ var collision=false;
 var active=false;
 var heroFire=false;
 var heroFireAllowed=true;
+var hitmanFire=false;
+var hitmanFireAllowed=true;
+var hitmanProjectileHit=false;
 var pause=false;
 var quit=false;
 var gameOver=false;
@@ -156,36 +161,37 @@ canvas.addEventListener("mousedown",function(event){
 	}
 },false);
 
+if(level>0){
+	canvas.addEventListener("click",function(event){
+		
+		if(heroFireAllowed==true){	
+			heroFireAllowed=false;
+			heroFire=true;
 
-canvas.addEventListener("click",function(event){
-	
-	if(heroFireAllowed==true){	
-		heroFireAllowed=false;
-		heroFire=true;
+			if(q==0){
+				heroProjDir="down";
+				heroProjectileX=heroX+heroWidth/2;
+				heroProjectileY=heroY+heroHeight;
+			}
+			else if(q==1){
+				heroProjDir="left";
+				heroProjectileX=heroX;
+				heroProjectileY=heroY+heroHeight/2;
+			}
+			else if(q==2){
+				heroProjDir="right";
+				heroProjectileX=heroX+heroWidth;
+				heroProjectileY=heroY+heroHeight/2;
+			}
+			else if(q==3){
+				heroProjDir="up";
+				heroProjectileX=heroX+heroWidth/2;
+				heroProjectileY=heroY;
+			}
+		}	
 
-		if(q==0){
-			heroProjDir="down";
-			heroProjectileX=heroX+heroWidth/2;
-			heroProjectileY=heroY+heroHeight;
-		}
-		else if(q==1){
-			heroProjDir="left";
-			heroProjectileX=heroX;
-			heroProjectileY=heroY+heroHeight/2;
-		}
-		else if(q==2){
-			heroProjDir="right";
-			heroProjectileX=heroX+heroWidth;
-			heroProjectileY=heroY+heroHeight/2;
-		}
-		else if(q==3){
-			heroProjDir="up";
-			heroProjectileX=heroX+heroWidth/2;
-			heroProjectileY=heroY;
-		}
-	}	
-
-},false);
+	},false);
+}	
 
 function stopAudio(audio) {    //Function to stop audio the current audio from playing
     audio.pause();
@@ -339,9 +345,12 @@ function characterWallCollide(charX,charY,charWidth,charHeight,wallX,wallY,wallS
 				if(char=="hero"){
 					charX = wallX-charWidth;
 				}
-				if(char=="projectile"){
+				if(char=="heroProjectile"){
 					heroFire=false;
 					heroFireAllowed=true;
+				}
+				if(char=="hitmanProjectile"){
+					return true;
 				}
 			}
 		}
@@ -351,9 +360,12 @@ function characterWallCollide(charX,charY,charWidth,charHeight,wallX,wallY,wallS
 				if(char=="hero"){
 					charX = wallX-charWidth;
 				}
-				if(char=="projectile"){
+				if(char=="heroProjectile"){
 					heroFire=false;
 					heroFireAllowed=true;
+				}
+				if(char=="hitmanProjectile"){
+					return true;
 				}
 			}
 		}
@@ -364,9 +376,12 @@ function characterWallCollide(charX,charY,charWidth,charHeight,wallX,wallY,wallS
 				if(char=="hero"){
 					charX = wallX+wallBreadth+2;
 				}
-				if(char=="projectile"){
+				if(char=="heroProjectile"){
 					heroFire=false;
 					heroFireAllowed=true;
+				}
+				if(char=="hitmanProjectile"){
+					return true;
 				}
 			}	
 		}
@@ -375,9 +390,12 @@ function characterWallCollide(charX,charY,charWidth,charHeight,wallX,wallY,wallS
 				if(char=="hero"){
 					charX = wallX+wallBreadth+2;
 				}
-				if(char=="projectile"){
+				if(char=="heroProjectile"){
 					heroFire=false;
 					heroFireAllowed=true;
+				}
+				if(char=="hitmanProjectile"){
+					return true;
 				}
 			}	
 		}
@@ -387,19 +405,25 @@ function characterWallCollide(charX,charY,charWidth,charHeight,wallX,wallY,wallS
 			if(char=="hero"){
 				charY = wallY+wallLength;
 			}
-			if(char=="projectile"){
-					heroFire=false;
-					heroFireAllowed=true;
-				}
+			if(char=="heroProjectile"){
+				heroFire=false;
+				heroFireAllowed=true;
+			}
+			if(char=="hitmanProjectile"){
+				return true;
+			}
 		}
 		if(((charX+charWidth>=wallX)&&(charX<=wallX+wallBreadth))&&((charY+charHeight-wallY==0)&&(wallSide=="south"))){//South wall's top condn
 			if(char=="hero"){
 				charY = wallY-charHeight;
 			}
-			if(char=="projectile"){
-					heroFire=false;
-					heroFireAllowed=true;
-				}
+			if(char=="heroProjectile"){
+				heroFire=false;
+				heroFireAllowed=true;
+			}
+			if(char=="hitmanProjectile"){
+				return true;
+			}
 		}
 
 		//Checking for extra wall in a Two wall system
@@ -409,9 +433,12 @@ function characterWallCollide(charX,charY,charWidth,charHeight,wallX,wallY,wallS
 					if(char=="hero"){
 						charX = wallX-charWidth;
 					}
-					if(char=="projectile"){
-					heroFire=false;
-					heroFireAllowed=true;
+					if(char=="heroProjectile"){
+						heroFire=false;
+						heroFireAllowed=true;
+					}
+					if(char=="hitmanProjectile"){
+						return true;
 					}
 				}
 			}
@@ -419,9 +446,12 @@ function characterWallCollide(charX,charY,charWidth,charHeight,wallX,wallY,wallS
 				if(char=="hero"){
 					charX = wallX+wallBreadth+2;	
 				}
-				if(char=="projectile"){
+				if(char=="heroProjectile"){
 					heroFire=false;
 					heroFireAllowed=true;
+				}
+				if(char=="hitmanProjectile"){
+					return true;
 				}
 			}
 		}
@@ -486,7 +516,12 @@ function obstacle(x,y,breadth,length,side,hasTwoWalls){
 	}
 
 	this.heroProjectileWallCollide = function(){
-		characterWallCollide(heroProjectileX,heroProjectileY,projectileWidth,projectileHeight,this.x,this.y,this.side,this.length,this.breadth,this.hasTwoWalls,"projectile");
+		characterWallCollide(heroProjectileX,heroProjectileY,projectileWidth,projectileHeight,this.x,this.y,this.side,this.length,this.breadth,this.hasTwoWalls,"heroProjectile");
+	}
+
+	this.hitmanProjectileWallCollide = function(hitmanProjectileX,hitmanProjectileY){
+		hitmanProjectileHit = characterWallCollide(hitmanProjectileX,hitmanProjectileY,projectileWidth,projectileHeight,this.x,this.y,this.side,this.length,this.breadth,this.hasTwoWalls,"hitmanProjectile");
+		return hitmanProjectileHit;
 	}
 
 	this.heroWallSqueeze = function(){
@@ -508,7 +543,7 @@ function obstacle(x,y,breadth,length,side,hasTwoWalls){
 	}
 }
 
-function hitman(x,y,side,orient,direction,active,k,l,n){
+function hitman(x,y,side,orient,direction,active,k,l,hitmanFire,hitmanFireAllowed,hitmanProjectileX,hitmanProjectileY,animVariable,n){
 	this.x = x;
 	this.y = y;
 	this.side = side;
@@ -517,8 +552,12 @@ function hitman(x,y,side,orient,direction,active,k,l,n){
 	this.active = active;
 	this.k=k;
 	this.l=l;
-	this.n=n;
+	this.hitmanFire=hitmanFire;
+	this.hitmanFireAllowed=hitmanFireAllowed;
+	this.hitmanProjectileX=hitmanProjectileX;
+	this.hitmanProjectileY=hitmanProjectileY;
 	this.animVariable=animVariable;
+	this.n=n;
 
 	if(this.n<(nWalls-1)){
 		n1=this.n+1;
@@ -665,6 +704,9 @@ function hitmanPosition(i){
 	animVariable=0;
 	n=i;
 
+	hitmanFire=false;
+	hitmanFireAllowed=true;
+
 	if(n==0||n==2||n==5){
 		active=true;
 		nCurrentHitman++;
@@ -711,7 +753,29 @@ function hitmanPosition(i){
 		direction="up";
 		l=0;
 	}
-	hitmanArray.push(new hitman(x,y,side,orient,direction,active,k,l,n,animVariable));
+
+	if(l==2){
+		direction="down";
+		hitmanProjectileX=x+hitmanWidth/2;
+		hitmanProjectileY=y+heroHeight;
+	}
+	else if(l==1){
+		direction="left";
+		hitmanProjectileX=x;
+		hitmanProjectileY=y+hitmanHeight/2;
+	}
+	else if(l==3){
+		direction="right";
+		hitmanProjectileX=x+hitmanWidth;
+		hitmanProjectileY=y+hitmanHeight/2;
+	}
+	else if(l==0){
+		direction="up";
+		hitmanProjectileX=x+hitmanWidth/2;
+		hitmanProjectileY=y;
+	}
+
+	hitmanArray.push(new hitman(x,y,side,orient,direction,active,k,l,hitmanFire,hitmanFireAllowed,hitmanProjectileX,hitmanProjectileY,animVariable,n));
 }
 
 for(i=0;i<nWalls;i++){
@@ -776,8 +840,10 @@ function drawHeroProjectile(){
 	ctx.drawImage(heroProjectile,heroProjectileX,heroProjectileY,projectileWidth,projectileHeight);
 }
 
-function drawHitmenProjectile(hitmenProjectileX,hitmenProjectileY){
-	ctx.drawImage(hitmenProjectile,hitmenProjectileX,hitmenProjectileY,projectileWidth,projectileHeight);
+function drawHitmanProjectile(hitmanProjectileX,hitmanProjectileY,active,hitmanFire,hitmanFireAllowed){
+	if((hitmanFire==true&&hitmanFireAllowed==false)&&(active==true)){
+		ctx.drawImage(hitmanProjectile,hitmanProjectileX,hitmenProjectileY,projectileWidth,projectileHeight);
+	}
 }
 
 function obstaclesUpdate(){
@@ -806,6 +872,16 @@ function obstaclesUpdate(){
 			if(heroFire==true&&heroFireAllowed==false){
 				obstacleArray[j].heroProjectileWallCollide();
 			}
+			for(i=0;i<nHitman;i++){
+				if((hitmanArray[i].active==true)&&((hitmanArray[i].hitmanFire==true)&&(hitmanArray[i].hitmanFireAllowed==false))){
+					hitmanProjectileHit=obstacleArray[j].hitmanProjectileWallCollide(hitmanArray[i].hitmanProjectileX,hitmanArray[i].hitmanProjectileY);
+					if(hitmanProjectileHit==true){
+						hitmanArray[i].hitmanFire=false;
+						hitmanArray[i].hitmanFireAllowed=true;
+					}
+					hitmanProjectileUpdate(i);
+				}
+			}
 		}
 		drawObstacles(obstacleArray[j].x,obstacleArray[j].y,obstacleArray[j].breadth,obstacleArray[j].length);
 		obstacleArray[j].x-=speed;
@@ -816,6 +892,7 @@ function hitmanUpdate(){
 	for(j=0;j<nHitman;j++){
 		hitmanArray[j].update();
 		drawHitman(hitmanArray[j].x,hitmanArray[j].y,hitmanArray[j].active,hitmanArray[j].k,hitmanArray[j].l);
+		drawHitmanProjectile(hitmanArray[j].hitmanProjectileX,hitmanArray[j].hitmanProjectileY,hitmanArray[j].active,hitmanArray[j].hitmanFire,hitmanArray[j].hitmanFireAllowed);
 		hitmanArray[j].x-=speed;
 	}
 
@@ -842,9 +919,31 @@ function heroProjectileUpdate(){
 			heroFire=false;
 			heroFireAllowed=true;
 		}
-
-
 	}
+}
+
+function hitmanProjectileUpdate(n){
+	if(hitmanArray[n].hitmanFire==true){
+		hitmanArray[n].hitmanProjectileX-=speed;
+
+		if(hitmanArray[n].hitmanProjDir=="right"){
+			hitmanArray[n].hitmanProjectileX+=projectileVelocity;
+		}
+		else if(hitmanArray[n].hitmanProjDir=="left"){
+			hitmanArray[n].hitmanProjectileX-=projectileVelocity;
+		}
+		else if(hitmanArray[n].hitmanProjDir=="up"){
+			hitmanArray[n].hitmanProjectileY-=projectileVelocity;
+		}
+		else if(hitmanArray[n].hitmanProjDir=="down"){
+			hitmanArray[n].hitmanProjectileY+=projectileVelocity;
+		}
+
+		if(hitmanArray[n].hitmanProjectileX<=0||hitmanArray[n].hitmanProjectileX>=canvasWidth||hitmanArray[n].hitmanProjectileY<=0||hitmanArray[n].hitmanProjectileY>=canvasHeight){
+			hitmanArray[n].hitmanFire=false;
+			hitmanArray[n].hitmanFireAllowed=true;
+		}
+	}	
 }
 
 function scoreUpdate(){
