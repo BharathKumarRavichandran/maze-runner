@@ -575,6 +575,27 @@ function hitman(x,y,side,orient,direction,active,k,l,hitmanFire,hitmanFireAllowe
 
 	this.update = function(){
 
+		if(this.l==2){
+			this.direction="down";
+			this.hitmanProjectileX=this.x+hitmanWidth/2-15;
+			this.hitmanProjectileY=this.y+hitmanHeight;
+		}
+		else if(this.l==1){
+			this.direction="left";
+			this.hitmanProjectileX=this.x;
+			this.hitmanProjectileY=this.y+hitmanHeight/2;
+		}
+		else if(this.l==3){
+			this.direction="right";
+			this.hitmanProjectileX=this.x+hitmanWidth;
+			this.hitmanProjectileY=this.y+hitmanHeight/2;
+		}
+		else if(this.l==0){
+			this.direction="up";
+			this.hitmanProjectileX=this.x+hitmanWidth/2-15;
+			this.hitmanProjectileY=this.y;
+		}
+
 		if(this.animVariable<6){//To control the hitman frame rate
 			this.animVariable++;
 		}
@@ -784,8 +805,8 @@ function hitmanPosition(i){
 
 	if(l==2){
 		direction="down";
-		hitmanProjectileX=x+hitmanWidth/2;
-		hitmanProjectileY=y+heroHeight;
+		hitmanProjectileX=x+hitmanWidth/2-15;
+		hitmanProjectileY=y+hitmanHeight;
 	}
 	else if(l==1){
 		direction="left";
@@ -799,7 +820,7 @@ function hitmanPosition(i){
 	}
 	else if(l==0){
 		direction="up";
-		hitmanProjectileX=x+hitmanWidth/2;
+		hitmanProjectileX=x+hitmanWidth/2-15;
 		hitmanProjectileY=y;
 	}
 
@@ -870,7 +891,7 @@ function drawHeroProjectile(){
 
 function drawHitmanProjectile(hitmanProjectileX,hitmanProjectileY,active,hitmanFire,hitmanFireAllowed){
 	if((hitmanFire==true&&hitmanFireAllowed==false)&&(active==true)){
-		ctx.drawImage(hitmanProjectile,hitmanProjectileX,hitmenProjectileY,projectileWidth,projectileHeight);
+		ctx.drawImage(hitmenProjectile,hitmanProjectileX,hitmanProjectileY,projectileWidth,projectileHeight);
 	}
 }
 
