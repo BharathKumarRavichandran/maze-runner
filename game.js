@@ -47,7 +47,6 @@ var heroLifeShot=8;
 var hitmanLifeShot=1;
 var hitmanVelocity=1.2;
 var projectileVelocity=4;
-var projectileVelocityHitman=0.008;
 var heroProjDir="right";
 var hitmanProjDir="right";
 var obstacleDist=190; 
@@ -730,6 +729,17 @@ function hitman(x,y,side,orient,direction,active,allowed,k,l,n,hitmanFire,hitman
 					if(this.hitmanFire==false&&this.hitmanFireAllowed==true){	
 						this.hitmanFire=true;
 						this.hitmanFireAllowed=false;
+						if(this.x-heroX>Math.abs(heroY-this.y)){
+							this.hitmanProjDir="left";
+						}
+						else{
+							if(heroY-this.y>0){
+								this.hitmanProjDir="down";
+							}	
+							else{
+								this.hitmanProjDir="up";
+							}
+						}
 					}	
 				}
 
@@ -757,6 +767,17 @@ function hitman(x,y,side,orient,direction,active,allowed,k,l,n,hitmanFire,hitman
 					if(this.hitmanFire==false&&this.hitmanFireAllowed==true){
 						this.hitmanFire=true;
 						this.hitmanFireAllowed=false;
+						if(heroX-this.x>Math.abs(heroY-this.y)){
+							this.hitmanProjDir="right";
+						}	
+						else{
+							if(heroY-this.y>0){
+								this.hitmanProjDir="down";
+							}	
+							else{
+								this.hitmanProjDir="up";
+							}
+						}
 					}
 				}		
 			}
