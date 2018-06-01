@@ -34,6 +34,7 @@ var hitmanProjectileX;
 var hitmanProjectileY;
 var radius=30;//Character's radius
 var score=0;//score of the character
+var scoreHit=0;//score to track killing of hitmen
 var level=1;//Hacker mode level>=1---Basic mode level=0
 var nWalls=6;//Number of walls to be generated initially
 var nHitman=6;//Number of Hitman generated initially
@@ -57,6 +58,7 @@ var hasTwoWalls=false;
 var wallDist = 130;
 var collision=false; 
 var active=false;
+var allowed=false;
 var heroFire=false;
 var heroFireAllowed=true;
 var hitmanFire=false;
@@ -552,13 +554,14 @@ function obstacle(x,y,breadth,length,side,hasTwoWalls){
 	}
 }
 
-function hitman(x,y,side,orient,direction,active,k,l,n,hitmanFire,hitmanFireAllowed,hitmanProjectileX,hitmanProjectileY,hitmanShot,animVariable){
+function hitman(x,y,side,orient,direction,active,allowed,k,l,n,hitmanFire,hitmanFireAllowed,hitmanProjectileX,hitmanProjectileY,hitmanShot,animVariable){
 	this.x = x;
 	this.y = y;
 	this.side = side;
 	this.orient = orient;
 	this.direction = direction;
 	this.active = active;
+	this.allowed=allowed;
 	this.k=k;
 	this.l=l;
 	this.n=n;
@@ -622,6 +625,10 @@ function hitman(x,y,side,orient,direction,active,k,l,n,hitmanFire,hitmanFireAllo
 			else{
 				this.side="north";
 				y=0.05*canvasHeight+Math.random()*100;	
+			}
+
+			if(this.active==false&&this.allowed==true){
+				this.active=true;
 			}
 		}
 
@@ -773,11 +780,13 @@ function hitmanPosition(i){
 	hitmanFireAllowed=true;
 
 	if(n==0||n==2||n==5){
+		allowed=true;
 		active=true;
 		nCurrentHitman++;
 	}
 	else{
 		active=false;
+		allowed=false;
 	}
 
 	if(i<(nWalls-1)&&obstacleArray[i+1].hasTwoWalls==true){
@@ -840,7 +849,7 @@ function hitmanPosition(i){
 		hitmanProjectileY=y;
 	}
 
-	hitmanArray.push(new hitman(x,y,side,orient,direction,active,k,l,n,hitmanFire,hitmanFireAllowed,hitmanProjectileX,hitmanProjectileY,hitmanShot,animVariable));
+	hitmanArray.push(new hitman(x,y,side,orient,direction,active,allowed,k,l,n,hitmanFire,hitmanFireAllowed,hitmanProjectileX,hitmanProjectileY,hitmanShot,animVariable));
 }
 
 for(i=0;i<nWalls;i++){
@@ -995,7 +1004,8 @@ function heroProjectileUpdate(){
 						hitmanArray[i].active=false;
 						heroFire=false;
 						heroFireAllowed=true;
-						score+=10;
+						scoreHit+=10;
+						scoreUpdate();
 					}
 				}
 			}
@@ -1029,7 +1039,7 @@ function hitmanProjectileUpdate(n){
 
 function scoreUpdate(){
 	time+=inc;
-	score=Math.round(speed*time);
+	score=Math.round(speed*time)+scoreHit;
 }
 
 function scoreDraw(){	
