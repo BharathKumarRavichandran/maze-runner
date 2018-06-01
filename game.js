@@ -1065,12 +1065,12 @@ function levelDraw(){
 }
 
 function levelUpdate(){
-	if(score>80){
+	if(score>100){
 		level=2;
 		speed=1.6;
 		heroVelocity=3.6;
 	}
-	else if(score>150){
+	else if(score>180){
 		level=3;
 		speed=2;
 		heroVelocity=3.9;
@@ -1180,8 +1180,9 @@ function animation(){
 			quitGameDraw();
 			return;
 		}
-		if(gameOver==true){//Gameover condition checking
+		if(gameOver==true||health==0){//Gameover condition checking
 			health=0;
+			gameOver=true;
 			healthmeterDraw();
 			if(level==0){
 				stopAudio(bgAudio1);
@@ -1193,7 +1194,7 @@ function animation(){
 			gameOverDraw();
 			return;
 		}
-		if(score>2500){
+		if(score>500){
 			if(level==0){
 				stopAudio(bgAudio1);
 			}
