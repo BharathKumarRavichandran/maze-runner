@@ -993,20 +993,38 @@ function drawTitleCard(){
 	ctx.fillStyle = "red";
 	ctx.font = "23px Trebuchet MS";
 	if(level==0){
-		ctx.fillText("WARNING: Don't ever dare to touch the walls",315,200);
+		ctx.fillText("WARNING: Don't ever dare to touch the walls!",315,200);
 	}	
+	else{
+		ctx.fillText("WARNING: Don't ever go near the skeletons!",315,200);
+		ctx.fillText("They throw special bombs at you",355,240);
+		ctx.fillText("Kill skeletons to get increase in score",335,280);
+	}
 	ctx.fillStyle = "yellow";
 	ctx.font = "bold 27px Trebuchet MS";
 	if(level==0){
-		ctx.fillText("Click on the character at first ",340,270);
+		ctx.fillText("Click on the character at first",340,270);
 		ctx.fillText("then move the cursor to move the character",250,320);
 	}
 	else{
-
+		ctx.fillText("Click on the character at first to move",290,380);
+		ctx.fillText("and click mouse to throw special bombs",290,420);
 	}	
 	ctx.fillStyle = "white";
 	ctx.font = "bold 30px Trebuchet MS";
-	ctx.fillText("Press ENTER to start the game!",330,390);
+	if(level==0){
+		ctx.fillText("Press ENTER to start the game!",330,390);	
+	}
+	else{
+		ctx.fillText("Press ENTER to start the game!",330,510);
+	}
+	ctx.fillStyle = "orange";
+	ctx.font = "bold 25px Trebuchet MS";
+	ctx.fillText("Pause/Resume : P",880,50);
+	ctx.fillText("Quit : Q",995,90);
+	ctx.fillText("Restart : R",960,130);
+
+
 }
 
 function drawCharacter(){
