@@ -67,6 +67,7 @@ var hitmanProjectileHit=false;
 var pause=false;
 var quit=false;
 var gameOver=false;
+var gameComplete=false;
 
 var obstacleArray = new Array();
 var twoWall = new Array();
@@ -205,38 +206,8 @@ function stopAudio(audio) {    //Function to stop audio the current audio from p
     audio.currentTime = 0;
 }
 
-function circleRectangleCollision(circle,rect,side){
-
-	//Calculating distances between centres of circle and rectangle
-	var distX = Math.abs(circle.x - rect.x-rect.w/2);
-    var distY = Math.abs(circle.y - rect.y-rect.h/2);
-
-    //Testing collision at points other than corners
-    if(distX>(rect.w/2 + circle.r)){
-    	return false; 
-    	
-    }
-    if(distY>(rect.h/2 + circle.r)){
-    	return false;
-    }
-   if(distX<=(rect.w/2)){
-    	console.log("hey1");
-    	return true;
-    	
-    } 
-   	if(distY<=(rect.h/2)){
-   		    console.log("hey2");
-   			return true;
-   	}
-
-   	//Testing for collision at corner points 
-   	var dx=distX-rect.w/2;
-    var dy=distY-rect.h/2;
-    return(dx*dx+dy*dy<=(circle.r*circle.r));	
-}
-
 function readMouseMove(e){
-	if((pause==false&&gameOver==false)&&((enter==true)&&(mouseDown==true))){
+	if((pause==false&&gameOver==false)&&((enter==true)&&(mouseDown==true))&&(gameComplete==false)){
 		mouseX = e.clientX-243;
 		mouseY = e.clientY-126;
 		if(level==0){//For Basic mode
@@ -684,11 +655,11 @@ function hitman(x,y,side,orient,direction,active,allowed,k,l,n,hitmanFire,hitman
 				for(i=0;i<nWalls;i++){
 					x1=obstacleArray[i].x;
 					if(((this.x-x1+obstacleArray[i].breadth<1)&&(this.x+hitmanWidth>x1+obstacleArray[i].breadth))){
-						if(obstacleArray[i].hasTwoWalls==true){
+						if(obstacleArray[i].hasTwoWalls==true){						
 							this.direction="right";
 						}
 						else{
-							if(this.side==obstacleArray[i].side){
+							if(this.side==obstacleArray[i].side){						
 								this.direction="right";
 							}
 						}
@@ -1085,7 +1056,8 @@ function levelUpdate(){
 		speed=2.7;
 		heroVelocity=5;
 	}	
-	else if(score>500){
+	else if(score>=500||gameComplete==true){
+		gameComplete=true;
 		gameCompleteDraw();
 	}
 }
@@ -1194,7 +1166,8 @@ function animation(){
 			gameOverDraw();
 			return;
 		}
-		if(score>500){
+		if(score>=500||gameComplete==true){
+			gameComplete=true;
 			if(level==0){
 				stopAudio(bgAudio1);
 			}
