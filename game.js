@@ -53,6 +53,8 @@ var obstacleDist=190;
 var nTwoWalls=0;
 
 var enter=false;
+var space=false;
+var spaceListen=false;
 var mouseDown=false;
 var hasTwoWalls=false;
 var wallDist = 130;
@@ -73,6 +75,7 @@ var obstacleArray = new Array();
 var twoWall = new Array();
 var hitmanArray = new Array();
 var heroAnimVariable = new Array();
+var levelUpdated = new Array();
 
 var x;
 var x1;
@@ -110,7 +113,7 @@ hitmenProjectile.src = "assets/hitmenProjectile1.png";
 var bgAudio1 = new Audio("audio/Surreal-Chase_Looping.mp3");
 var bgAudio2 = new Audio("audio/Puzzle-Game_Looping.mp3");
 var hit = new Audio("audio/hit.wav");
-var dead = new Audio("audio/dead.wav");
+var dead = new Audio("audio/gameOver.mp3");
 
 bgAudio1.loop = true;
 bgAudio2.loop = true;
@@ -128,12 +131,23 @@ for(i=0;i<4;i++){
 	heroAnimVariable[i]=0;
 }
 
+for(i=2;i<6;i++){
+	levelUpdated[i]=false;
+}
+
 document.onmousemove = readMouseMove;
 
 document.addEventListener("keydown",function(event){
 
 	if(event.keyCode==13){//enter keyCode
 		enter=true;
+	}
+
+	if(event.keyCode==32){//space keyCode
+		if(spaceListen==true){
+			spaceListen=false;
+			animation();
+		}
 	}
 
 	if(event.keyCode == 82){// R keyCode
@@ -149,7 +163,7 @@ document.addEventListener("keydown",function(event){
         	pause=false;	
         	animation();
         }
-       	if((quit==true&&pause==true)&&(enter==true)){
+       	if((quit==true&&pause==true)&&((enter==true)&&(spaceListen==false))){
         	initialise();
 			quit=false;
 			pauseGameDraw();
@@ -208,7 +222,7 @@ function stopAudio(audio) {    //Function to stop audio the current audio from p
 }
 
 function readMouseMove(e){
-	if((pause==false&&gameOver==false)&&((enter==true)&&(mouseDown==true))&&(gameComplete==false)){
+	if((pause==false&&gameOver==false)&&((enter==true)&&(mouseDown==true))&&((gameComplete==false)&&(spaceListen==false))){
 		mouseX = e.clientX-243;
 		mouseY = e.clientY-126;
 		if(level==0){//For Basic mode
@@ -1175,25 +1189,39 @@ function levelDraw(){
 }
 
 function levelUpdate(){
-	if(score>100){
+	if(score>100&&levelUpdated[2]==false){
+		spaceListen=true;
 		level=2;
 		speed=1.6;
 		heroVelocity=3.6;
+		hitmanArray[1].active=true;
+		hitmanArray[1].active=true;
+		levelUpdated[2]=true;
 	}
-	else if(score>180){
+	else if(score>180&&levelUpdated[3]==false){
+		spaceListen=true;
 		level=3;
 		speed=2;
 		heroVelocity=3.9;
+		hitmanArray[3].active=true;
+		hitmanArray[3].active=true;
+		levelUpdated[3]=true;
 	}
-	else if(score>250){
+	else if(score>250&&levelUpdated[4]==false){
+		spaceListen=true;
 		level=4;
 		speed=2.3;
 		heroVelocity=4.3;
+		hitmanArray[4].active=true;
+		hitmanArray[4].active=true;
+		levelUpdated[4]=true;
 	}
-	else if(score>400){
+	else if(score>400&&levelUpdated[5]==false){
+		spaceListen=true;
 		level=5;
 		speed=2.7;
 		heroVelocity=5;
+		levelUpdated[5]=true;
 	}	
 	else if(score>=500||gameComplete==true){
 		gameComplete=true;
@@ -1263,6 +1291,20 @@ function gameOverDraw(){//end screen to draw on canvas when the game is over
 	ctx.fillText("Press R to restart",canvasWidth-canvasWidth*0.63,canvasHeight-canvasHeight*0.40);
 }
 
+function levelUpgradeDraw(){//end screen to draw on canvas when the game is over
+	ctx.fillStyle = "#000000";
+	ctx.globalAlpha = 0.6;
+	ctx.fillRect(canvasWidth-canvasWidth*0.73,canvasHeight-canvasHeight*0.8,500,300);
+	ctx.globalAlpha = 1;
+	ctx.fillStyle = "green";
+	ctx.font = "40px Trebuchet MS";
+	ctx.fillText("LEVEL "+level+" COMPLETED",canvasWidth-canvasWidth*0.65,canvasHeight-canvasHeight*0.65);
+	ctx.font = "30px Trebuchet MS";
+	ctx.fillStyle = "#FFFFFF";
+	ctx.fillText("Score : "+score,canvasWidth-canvasWidth*0.58,canvasHeight-canvasHeight*0.53);
+	ctx.fillText("Press Space to continue",canvasWidth-canvasWidth*0.63,canvasHeight-canvasHeight*0.40);
+}
+
 function gameCompleteDraw(){//end screen to draw on canvas when the game is over
 	ctx.fillStyle = "#000000";
 	ctx.globalAlpha = 0.6;
@@ -1293,6 +1335,12 @@ function animation(){
 			pauseGameDraw();
 			return;
 		}
+
+		if(spaceListen==true){
+			levelUpgradeDraw();
+			return;
+		}
+
 		if(quit==true){
 			pause=true;
 			quitGameDraw();
