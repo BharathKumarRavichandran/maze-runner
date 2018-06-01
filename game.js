@@ -996,9 +996,10 @@ function drawTitleCard(){
 		ctx.fillText("WARNING: Don't ever dare to touch the walls!",315,200);
 	}	
 	else{
-		ctx.fillText("WARNING: Don't ever go near the skeletons!",315,200);
-		ctx.fillText("They throw special bombs at you",355,240);
-		ctx.fillText("Kill skeletons to get increase in score",335,280);
+		ctx.fillText("WARNING: Don't ever go near the skeletons!",315,190);
+		ctx.fillText("They are known for their weird behaviour",325,225);
+		ctx.fillText("and fast bomb throwing skills",385,260);
+		ctx.fillText("Kill skeletons to get increase in score",335,295);
 	}
 	ctx.fillStyle = "yellow";
 	ctx.font = "bold 27px Trebuchet MS";
