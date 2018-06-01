@@ -733,6 +733,18 @@ function hitman(x,y,side,orient,direction,active,k,l,n,hitmanFire,hitmanFireAllo
 		}
 
 	}
+
+	this.hitmanProjectileHeroHit = function(){//Condition to check if the hitman's projectile hits the hero
+	
+		if(this.hitmanProjectileX+projectileWidth/2>=heroX&&this.hitmanProjectileX+projectileWidth/2<=heroX+heroWidth){
+			if(this.hitmanProjectileY+projectileHeight/2>=heroY&&this.hitmanProjectileY+projectileHeight/2<=heroY+heroHeight){
+				this.hitmanFire=false;
+				this.hitmanFireAllowed=true;
+				heroShot++;
+				health-=20;
+			}
+		}
+	}
 }
 
 function obstaclePosition(i){
@@ -925,8 +937,9 @@ function obstaclesUpdate(){
 			if(heroFire==true&&heroFireAllowed==false){
 				obstacleArray[j].heroProjectileWallCollide();
 			}
-			for(i=0;i<nHitman;i++){
+			for(i=0;i<nHitman;i++){//hitman projectile collision with hero,walls check condition
 				if((hitmanArray[i].active==true)&&((hitmanArray[i].hitmanFire==true)&&(hitmanArray[i].hitmanFireAllowed==false))){
+					hitmanArray[i].hitmanProjectileHeroHit();
 					hitmanProjectileHit=obstacleArray[j].hitmanProjectileWallCollide(hitmanArray[i].hitmanProjectileX,hitmanArray[i].hitmanProjectileY);
 					if(hitmanProjectileHit==true){
 						hitmanArray[i].hitmanFire=false;
