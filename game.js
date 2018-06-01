@@ -1109,7 +1109,7 @@ function hitmanUpdate(){
 		hitmanArray[j].heroApproachHitman();
 		hitmanArray[j].update();
 		drawHitman(hitmanArray[j].x,hitmanArray[j].y,hitmanArray[j].active,hitmanArray[j].k,hitmanArray[j].l);
-		if(hitmanArray[j].hitmanFire==true&&hitmanArray[j].hitmanFireAllowed==false){
+		if((hitmanArray[j].hitmanFire==true&&hitmanArray[j].hitmanFireAllowed==false)&&((hitmanArray[j].active==true)&&(hitmanArray[j].allowed==true))){
 			drawHitmanProjectile(hitmanArray[j].hitmanProjectileX,hitmanArray[j].hitmanProjectileY,hitmanArray[j].active,hitmanArray[j].allowed,hitmanArray[j].hitmanFire,hitmanArray[j].hitmanFireAllowed);
 		}
 		hitmanArray[j].x-=speed;
