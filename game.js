@@ -52,6 +52,8 @@ var hitmanProjDir="right";
 var obstacleDist=190; 
 var nTwoWalls=0;
 
+var modeSelector=false;
+var modeSelectorAllowed=true;
 var enter=false;
 var space=false;
 var spaceListen=false;
@@ -118,14 +120,19 @@ var dead = new Audio("audio/gameOver.mp3");
 bgAudio1.loop = true;
 bgAudio2.loop = true;
 
-if(level==0){//For Basic mode
-	speed=3;
-	inc=0.05;
-}
-else{//For Hacker mode
-	speed=1.3;
-	inc=0.1;
-}
+function modeSelectorInit(){
+	if(level==0){//For Basic mode
+		speed=2.5;
+		inc=0.05;
+		mouseX=50;
+		mouseY=100;
+		mouseDown=false;
+	}
+	else{//For Hacker mode
+		speed=1.3;
+		inc=0.1;
+	}
+}	
 
 for(i=0;i<4;i++){
 	heroAnimVariable[i]=0;
@@ -139,7 +146,7 @@ document.onmousemove = readMouseMove;
 
 document.addEventListener("keydown",function(event){
 
-	if(event.keyCode==13){//enter keyCode
+	if(event.keyCode==13&&modeSelector==true){//enter keyCode
 		enter=true;
 	}
 
@@ -219,12 +226,31 @@ document.addEventListener("keydown",function(event){
 canvas.addEventListener("mousedown",function(event){
 	mouseX = event.clientX-w2;
 	mouseY = event.clientY-canvas.offsetTop;
+
 	if(((mouseX>=heroX)&&(mouseX<heroX+heroWidth))&&((mouseY>=heroY)&&(mouseY<heroY+heroHeight))){
 		mouseDown=true;
 	}
+
+	if(modeSelectorAllowed==true){
+		if((mouseX>=0)&&(mouseX<=canvasWidth/2)){
+			level=0;	
+		}
+		else{
+			level=1;
+		}
+		modeSelectorInit();
+		hackerCanvasClickListenerAdd();
+		modeSelector=true;
+		modeSelectorAllowed=false;
+		mouseX=50;
+		mouseY=100;
+		mouseDown=false;
+		drawTitleCard();
+	}
+	
 },false);
 
-if(level>0){
+function hackerCanvasClickListenerAdd(){
 	canvas.addEventListener("click",function(event){
 		
 		if(heroFireAllowed==true){	
@@ -262,7 +288,8 @@ function stopAudio(audio) {    //Function to stop audio the current audio from p
 }
 
 function readMouseMove(e){
-	if((pause==false&&gameOver==false)&&((enter==true)&&(mouseDown==true))&&((gameComplete==false)&&(spaceListen==false))){
+	if((pause==false&&gameOver==false)&&((enter==true)&&(mouseDown==true))&&((gameComplete==false)&&(spaceListen==false)&&(modeSelector==true))){
+		console.log("hey");
 		mouseX = e.clientX-243;
 		mouseY = e.clientY-126;
 		if(level==0){//For Basic mode
@@ -1024,6 +1051,20 @@ if(level!=0){
 	}
 }	
 
+function modeSelectorDraw(){
+	ctx.fillStyle="#FF69B4";
+	ctx.fillRect(0,0,canvasWidth/2,canvasHeight);
+	ctx.fillStyle="#00bfff";
+	ctx.fillRect(canvasWidth/2,0,canvasWidth/2,canvasHeight);
+	ctx.fillStyle = "white";
+	ctx.font = "bold italic 50px Trebuchet MS";
+	ctx.fillText("BASIC MODE",130,300);
+	ctx.fillText("HACKER MODE",670,300);
+	ctx.font = "bold italic 30px Trebuchet MS";
+	ctx.fillText("Click here!",260,350);
+	ctx.fillText("Click here!",860,350);
+}
+
 function drawTitleCard(){
 	ctx.fillStyle = "black";
 	ctx.fillRect(0,0,canvasWidth,canvasHeight);
@@ -1040,6 +1081,13 @@ function drawTitleCard(){
 		ctx.fillText("They are known for their weird behaviour",325,225);
 		ctx.fillText("and fast bomb throwing skills",385,260);
 		ctx.fillText("Kill skeletons to get increase in score",335,295);
+		ctx.fillStyle = "white";
+		ctx.fillText("CONTROLS",960,420);
+		ctx.fillStyle = "green";
+		ctx.fillText("Shoot Up : W",940,460);
+		ctx.fillText("Shoot Down : S",907,500);
+		ctx.fillText("Shoot Right : D",912,540);
+		ctx.fillText("Shoot Left : A",925,580);
 	}
 	ctx.fillStyle = "yellow";
 	ctx.font = "bold 27px Trebuchet MS";
@@ -1065,27 +1113,23 @@ function drawTitleCard(){
 	ctx.fillText("Pause/Resume : P",877,50);
 	ctx.fillText("Quit : Q",995,90);
 	ctx.fillText("Restart : R",960,130);
-	ctx.fillStyle = "white";
-	ctx.fillText("CONTROLS",960,420);
-	ctx.fillStyle = "green";
-	ctx.fillText("Shoot Up : W",940,460);
-	ctx.fillText("Shoot Down : S",907,500);
-	ctx.fillText("Shoot Right : D",912,540);
-	ctx.fillText("Shoot Left : A",925,580);
-
-
 }
 
 function drawCharacter(){
 	ctx.clearRect(0,0,canvasWidth,canvasHeight);
-	if(level==0){
+	if((level==0)&&(modeSelector==true&&enter==true)){
 		heroX=mouseX;
 		heroY=mouseY;
 	}
-	ctx.drawImage(hero,48*p,72*q,48,72,heroX,heroY,heroWidth,heroHeight);
-	if(heroFire==true&&heroFireAllowed==false){
-		drawHeroProjectile();
+	else{
+		if(heroFire==true&&heroFireAllowed==false){
+			if(level!=0){
+				drawHeroProjectile();
+			}
+		}
 	}
+	ctx.drawImage(hero,48*p,72*q,48,72,heroX,heroY,heroWidth,heroHeight);
+	
 }
 
 function drawObstacles(x,y,breadth,length){
@@ -1395,7 +1439,7 @@ function gameCompleteDraw(){//end screen to draw on canvas when the game is over
 
 function animation(){
 
-	if(enter==true){
+	if(enter==true&&modeSelector==true){
 		if(level==0){
 			bgAudio1.play();
 		}
@@ -1448,5 +1492,5 @@ function animation(){
 	requestAnimationFrame(animation);
 }
 
-drawTitleCard();
+modeSelectorDraw();
 animation();
