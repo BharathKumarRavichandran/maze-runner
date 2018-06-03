@@ -143,6 +143,46 @@ document.addEventListener("keydown",function(event){
 		enter=true;
 	}
 
+	if(event.keyCode==68){//d keycode
+		if(heroFireAllowed==true){	
+			heroFireAllowed=false;
+			heroFire=true;
+			heroProjDir="right";
+			heroProjectileX=heroX+heroWidth;
+			heroProjectileY=heroY+heroHeight/2;
+		}	
+	}
+
+	if(event.keyCode==65){//a keycode
+		if(heroFireAllowed==true){	
+			heroFireAllowed=false;
+			heroFire=true;
+			heroProjDir="left";
+			heroProjectileX=heroX;
+			heroProjectileY=heroY+heroHeight/2;
+		}	
+	}
+
+	if(event.keyCode==87){//w keycode
+		if(heroFireAllowed==true){	
+			heroFireAllowed=false;
+			heroFire=true;
+			heroProjDir="up";
+			heroProjectileX=heroX+heroWidth/2;
+			heroProjectileY=heroY;
+		}	
+	}
+
+	if(event.keyCode==83){//s keycode
+		if(heroFireAllowed==true){	
+			heroFireAllowed=false;
+			heroFire=true;
+			heroProjDir="down";
+			heroProjectileX=heroX+heroWidth/2;
+			heroProjectileY=heroY+heroHeight;
+		}	
+	}
+
 	if(event.keyCode==32){//space keyCode
 		if(spaceListen==true){
 			spaceListen=false;
@@ -1009,7 +1049,8 @@ function drawTitleCard(){
 	}
 	else{
 		ctx.fillText("Click on the character at first to move",290,380);
-		ctx.fillText("and click mouse to throw special bombs",290,420);
+		ctx.fillText("and click mouse or use WASD to throw special bombs",200,420);
+		ctx.fillText("NOTE: You can throw only one bomb at a time",240,460);
 	}	
 	ctx.fillStyle = "white";
 	ctx.font = "bold 30px Trebuchet MS";
@@ -1017,13 +1058,20 @@ function drawTitleCard(){
 		ctx.fillText("Press ENTER to start the game!",330,390);	
 	}
 	else{
-		ctx.fillText("Press ENTER to start the game!",330,510);
+		ctx.fillText("Press ENTER to start the game!",330,560);
 	}
 	ctx.fillStyle = "orange";
 	ctx.font = "bold 25px Trebuchet MS";
-	ctx.fillText("Pause/Resume : P",880,50);
+	ctx.fillText("Pause/Resume : P",877,50);
 	ctx.fillText("Quit : Q",995,90);
 	ctx.fillText("Restart : R",960,130);
+	ctx.fillStyle = "white";
+	ctx.fillText("CONTROLS",960,420);
+	ctx.fillStyle = "green";
+	ctx.fillText("Shoot Up : W",940,460);
+	ctx.fillText("Shoot Down : S",907,500);
+	ctx.fillText("Shoot Right : D",912,540);
+	ctx.fillText("Shoot Left : A",925,580);
 
 
 }
@@ -1232,10 +1280,10 @@ function levelUpdate(){
 		hitmanArray[3].active=true;
 		levelUpdated[3]=true;
 	}
-	else if(score>250&&levelUpdated[4]==false){
+	else if(score>300&&levelUpdated[4]==false){
 		spaceListen=true;
 		level=4;
-		speed=2.3;
+		speed=2.1;
 		heroVelocity=4.3;
 		hitmanArray[4].active=true;
 		hitmanArray[4].active=true;
@@ -1244,7 +1292,7 @@ function levelUpdate(){
 	else if(score>400&&levelUpdated[5]==false){
 		spaceListen=true;
 		level=5;
-		speed=2.7;
+		speed=2.4;
 		heroVelocity=5;
 		levelUpdated[5]=true;
 	}	
