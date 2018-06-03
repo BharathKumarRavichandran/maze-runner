@@ -178,7 +178,7 @@ document.addEventListener("keydown",function(event){
 
 canvas.addEventListener("mousedown",function(event){
 	mouseX = event.clientX-w2;
-	mouseY = event.clientY-130.4;
+	mouseY = event.clientY-canvas.offsetTop;
 	if(((mouseX>=heroX)&&(mouseX<heroX+heroWidth))&&((mouseY>=heroY)&&(mouseY<heroY+heroHeight))){
 		mouseDown=true;
 	}
