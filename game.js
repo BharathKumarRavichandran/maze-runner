@@ -1197,7 +1197,13 @@ function healthmeterDraw(){
 	ctx.fillRect(0.05*canvasWidth,0.9*canvasHeight,170,25);
 	ctx.fillStyle = "black";
 	ctx.fillRect(0.05*canvasWidth+5,0.9*canvasHeight+5,160,15);
-	ctx.fillStyle = "red";
+	ctx.fillStyle = "green";
+	if(health<120){
+		ctx.fillStyle = "orange";
+	}	
+	if(health<70){
+		ctx.fillStyle = "red";
+	}
 	ctx.fillRect(0.05*canvasWidth+5,0.9*canvasHeight+5,health,15);
 }
 
