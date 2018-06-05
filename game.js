@@ -1092,11 +1092,11 @@ function drawTitleCard(){
 	ctx.fillStyle = "yellow";
 	ctx.font = "bold 27px Trebuchet MS";
 	if(level==0){
-		ctx.fillText("Click on the character at first",340,270);
+		ctx.fillText("Double click on the character at first",320,270);
 		ctx.fillText("then move the cursor to move the character",250,320);
 	}
 	else{
-		ctx.fillText("Click on the character at first to move",290,380);
+		ctx.fillText(" Double click on the character at first to move",250,380);
 		ctx.fillText("and click mouse or use WASD to throw special bombs",200,420);
 		ctx.fillText("NOTE: You can throw only one bomb at a time",240,460);
 	}	
@@ -1201,8 +1201,10 @@ function hitmanUpdate(){
 		hitmanArray[j].heroApproachHitman();
 		hitmanArray[j].update();
 		drawHitman(hitmanArray[j].x,hitmanArray[j].y,hitmanArray[j].active,hitmanArray[j].k,hitmanArray[j].l);
-		if((hitmanArray[j].hitmanFire==true&&hitmanArray[j].hitmanFireAllowed==false)&&((hitmanArray[j].active==true)&&(hitmanArray[j].allowed==true))){
-			drawHitmanProjectile(hitmanArray[j].hitmanProjectileX,hitmanArray[j].hitmanProjectileY,hitmanArray[j].active,hitmanArray[j].allowed,hitmanArray[j].hitmanFire,hitmanArray[j].hitmanFireAllowed);
+		if(hitmanArray[j].hitmanFire==true&&hitmanArray[j].hitmanFireAllowed==false){
+			if(hitmanArray[j].active==true&&hitmanArray[j].allowed==true){
+				drawHitmanProjectile(hitmanArray[j].hitmanProjectileX,hitmanArray[j].hitmanProjectileY,hitmanArray[j].active,hitmanArray[j].allowed,hitmanArray[j].hitmanFire,hitmanArray[j].hitmanFireAllowed);
+			}		
 		}
 		hitmanArray[j].x-=speed;
 	}
