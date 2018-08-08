@@ -237,9 +237,9 @@ canvas.addEventListener("mousedown",function(event){
 		}
 		else{
 			level=1;
+			hackerCanvasClickListenerAdd();
 		}
 		modeSelectorInit();
-		hackerCanvasClickListenerAdd();
 		modeSelector=true;
 		modeSelectorAllowed=false;
 		mouseX=50;
