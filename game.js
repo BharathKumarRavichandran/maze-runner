@@ -7,14 +7,14 @@ var canvasWidth = canvas.getAttribute("width");
 var canvasHeight = canvas.getAttribute("height");
 var w1 = (screenWidth/2) - screenWidth*0.1;;
 var w2 = screenWidth*0.14;
-document.getElementById("title").style.marginLeft = w1+"px";//Aligning title in the centre by manipulating margin-left property
-canvas.style.marginLeft = w2+"px";//Aligning canvas in the centre by manipulating margin-left property
+//document.getElementById("title").style.marginLeft = w1+"px";//Aligning title in the centre by manipulating margin-left property
+//canvas.style.marginLeft = w2+"px";//Aligning canvas in the centre by manipulating margin-left property
 
 var health=160;//Initial Health
 var mouseX=50;
 var mouseY=100;
 var oldMouseX=100;
-var oldMouseY=300; 
+var oldMouseY=300;
 var oldHeroX=100;
 var oldHeroY=300;
 var animVariable=0;
@@ -49,7 +49,7 @@ var hitmanVelocity=1.2;
 var projectileVelocity=4;
 var heroProjDir="right";
 var hitmanProjDir="right";
-var obstacleDist=190; 
+var obstacleDist=190;
 var nTwoWalls=0;
 
 var modeSelector=false;
@@ -60,7 +60,7 @@ var spaceListen=false;
 var mouseDown=false;
 var hasTwoWalls=false;
 var wallDist = 130;
-var collision=false; 
+var collision=false;
 var active=false;
 var allowed=false;
 var heroFire=false;
@@ -88,7 +88,7 @@ var direction;
 var n;//n order of hitman
 var n1;
 var n2;
-var breadth=50;//Breadth of wall obstacle 
+var breadth=50;//Breadth of wall obstacle
 var length;//Length of wall obstacle
 var twoWallLength = 500;
 var i=0;
@@ -132,7 +132,7 @@ function modeSelectorInit(){
 		speed=1.3;
 		inc=0.1;
 	}
-}	
+}
 
 for(i=0;i<4;i++){
 	heroAnimVariable[i]=0;
@@ -151,43 +151,43 @@ document.addEventListener("keydown",function(event){
 	}
 
 	if(event.keyCode==68){//d keycode
-		if(heroFireAllowed==true){	
+		if(heroFireAllowed==true){
 			heroFireAllowed=false;
 			heroFire=true;
 			heroProjDir="right";
 			heroProjectileX=heroX+heroWidth;
 			heroProjectileY=heroY+heroHeight/2;
-		}	
+		}
 	}
 
 	if(event.keyCode==65){//a keycode
-		if(heroFireAllowed==true){	
+		if(heroFireAllowed==true){
 			heroFireAllowed=false;
 			heroFire=true;
 			heroProjDir="left";
 			heroProjectileX=heroX;
 			heroProjectileY=heroY+heroHeight/2;
-		}	
+		}
 	}
 
 	if(event.keyCode==87){//w keycode
-		if(heroFireAllowed==true){	
+		if(heroFireAllowed==true){
 			heroFireAllowed=false;
 			heroFire=true;
 			heroProjDir="up";
 			heroProjectileX=heroX+heroWidth/2;
 			heroProjectileY=heroY;
-		}	
+		}
 	}
 
 	if(event.keyCode==83){//s keycode
-		if(heroFireAllowed==true){	
+		if(heroFireAllowed==true){
 			heroFireAllowed=false;
 			heroFire=true;
 			heroProjDir="down";
 			heroProjectileX=heroX+heroWidth/2;
 			heroProjectileY=heroY+heroHeight;
-		}	
+		}
 	}
 
 	if(event.keyCode==32){//space keyCode
@@ -207,7 +207,7 @@ document.addEventListener("keydown",function(event){
         	pause=true;
         }
         else{
-        	pause=false;	
+        	pause=false;
         	animation();
         }
        	if((quit==true&&pause==true)&&((enter==true)&&(spaceListen==false))){
@@ -233,7 +233,7 @@ canvas.addEventListener("mousedown",function(event){
 
 	if(modeSelectorAllowed==true){
 		if((mouseX>=0)&&(mouseX<=canvasWidth/2)){
-			level=0;	
+			level=0;
 		}
 		else{
 			level=1;
@@ -247,13 +247,13 @@ canvas.addEventListener("mousedown",function(event){
 		mouseDown=false;
 		drawTitleCard();
 	}
-	
+
 },false);
 
 function hackerCanvasClickListenerAdd(){
 	canvas.addEventListener("click",function(event){
-		
-		if(heroFireAllowed==true){	
+
+		if(heroFireAllowed==true){
 			heroFireAllowed=false;
 			heroFire=true;
 
@@ -277,10 +277,10 @@ function hackerCanvasClickListenerAdd(){
 				heroProjectileX=heroX+heroWidth/2;
 				heroProjectileY=heroY;
 			}
-		}	
+		}
 
 	},false);
-}	
+}
 
 function stopAudio(audio) {    //Function to stop audio the current audio from playing
     audio.pause();
@@ -336,7 +336,7 @@ function readMouseMove(e){
 				else{
 					p=0;
 				}
-			}	
+			}
 		}
 
 		if(mouseX<oldMouseX){
@@ -349,7 +349,7 @@ function readMouseMove(e){
 				else{
 					p=0;
 				}
-			}	
+			}
 		}
 		if(mouseY>oldMouseY){
 			q=0;
@@ -361,7 +361,7 @@ function readMouseMove(e){
 				else{
 					p=0;
 				}
-			}	
+			}
 		}
 		if(mouseY<oldMouseY){
 			q=3;
@@ -373,7 +373,7 @@ function readMouseMove(e){
 				else{
 					p=0;
 				}
-			}	
+			}
 		}
 		if(level!=0){
 			if(mouseX>heroX){
@@ -390,7 +390,7 @@ function readMouseMove(e){
 				heroY-=heroVelocity;
 			}
 		}
-	
+
 		oldMouseX=mouseX;
 		oldMouseY=mouseY;
 		oldHeroX=heroX;
@@ -447,7 +447,7 @@ function characterWallCollide(charX,charY,charWidth,charHeight,wallX,wallY,wallS
 				}
 			}
 		}
-		
+
 		//Checking for normal walls(left side)
 		if(((charX-(wallX+wallBreadth)<0)&&(charX>wallX))&&((charY<=wallY+wallLength)&&(wallSide=="north"))){
 			if(charY-(wallY+wallLength)!=0){
@@ -468,7 +468,7 @@ function characterWallCollide(charX,charY,charWidth,charHeight,wallX,wallY,wallS
 						hitmanArray[n2].direction="up";
 					}
 				}
-			}	
+			}
 		}
 		if(((charX-(wallX+wallBreadth)<0)&&(charX>wallX))&&((charY+charHeight>=wallY)&&(wallSide=="south"))){
 			if(charY+charHeight-wallY!=0){
@@ -489,7 +489,7 @@ function characterWallCollide(charX,charY,charWidth,charHeight,wallX,wallY,wallS
 						hitmanArray[n2].direction="up";
 					}
 				}
-			}	
+			}
 		}
 
 		//Checking for normal walls(top and bottom side)
@@ -549,7 +549,7 @@ function characterWallCollide(charX,charY,charWidth,charHeight,wallX,wallY,wallS
 			}
 			if(((charX-(wallX+wallBreadth)<0)&&(charX>wallX))&&((charY+charHeight>=wallY+wallLength+wallDist))){
 				if(char=="hero"){
-					charX = wallX+wallBreadth+2;	
+					charX = wallX+wallBreadth+2;
 				}
 				if(char=="heroProjectile"){
 					heroFire=false;
@@ -657,7 +657,7 @@ function obstacle(x,y,breadth,length,side,hasTwoWalls){
 			if(((heroX+heroWidth>=this.x)&&((heroX<=this.x)&&heroX<=0))&&((heroY+heroHeight>=this.y+this.length+wallDist))){
 				gameOver=true;
 			}
-		}	
+		}
 	}
 }
 
@@ -692,7 +692,7 @@ function hitman(x,y,side,orient,direction,active,allowed,k,l,n,hitmanFire,hitman
 		this.changeX=true;
 
 		if(this.hitmanFire==false&&this.hitmanFireAllowed==true){
-			
+
 			if(this.l==2){
 				this.hitmanProjDir="down";
 				this.hitmanProjectileX=this.x+hitmanWidth/2-15;
@@ -713,7 +713,7 @@ function hitman(x,y,side,orient,direction,active,allowed,k,l,n,hitmanFire,hitman
 				this.hitmanProjectileX=this.x+hitmanWidth/2-15;
 				this.hitmanProjectileY=this.y;
 			}
-		}	
+		}
 
 		if(this.animVariable<6){//To control the hitman frame rate
 			this.animVariable++;
@@ -737,7 +737,7 @@ function hitman(x,y,side,orient,direction,active,allowed,k,l,n,hitmanFire,hitman
 			}
 			else{
 				this.side="north";
-				y=0.05*canvasHeight+Math.random()*100;	
+				y=0.05*canvasHeight+Math.random()*100;
 			}
 
 			if(this.active==false&&this.allowed==true){
@@ -789,7 +789,7 @@ function hitman(x,y,side,orient,direction,active,allowed,k,l,n,hitmanFire,hitman
 					}
 				}
 			}
-			
+
 			else{//direction left
 				this.x-=hitmanVelocity;
 				this.l=1;
@@ -801,21 +801,21 @@ function hitman(x,y,side,orient,direction,active,allowed,k,l,n,hitmanFire,hitman
 				for(i=0;i<nWalls;i++){
 					x1=obstacleArray[i].x;
 					if(((this.x-x1+obstacleArray[i].breadth<1)&&(this.x+hitmanWidth>x1+obstacleArray[i].breadth))){
-						if(obstacleArray[i].hasTwoWalls==true){						
+						if(obstacleArray[i].hasTwoWalls==true){
 							this.direction="right";
 							this.changeX=false;
 						}
 						else{
-							if(this.side==obstacleArray[i].side){						
+							if(this.side==obstacleArray[i].side){
 								this.direction="right";
 								this.changeX=false;
 							}
 						}
 					}
 				}
-			}	
+			}
 		}
-		else{//vertical orient 
+		else{//vertical orient
 			if(this.direction=="up"){//direction up
 				this.y-=hitmanVelocity;
 				this.l=0;
@@ -866,7 +866,7 @@ function hitman(x,y,side,orient,direction,active,allowed,k,l,n,hitmanFire,hitman
 				}
 
 				if((this.x-heroX<100&&this.x-heroX>0)||(Math.abs(this.y-heroY)<100)){
-					if(this.hitmanFire==false&&this.hitmanFireAllowed==true){	
+					if(this.hitmanFire==false&&this.hitmanFireAllowed==true){
 						this.hitmanFire=true;
 						this.hitmanFireAllowed=false;
 						if(this.x-heroX>Math.abs(heroY-this.y)){
@@ -875,12 +875,12 @@ function hitman(x,y,side,orient,direction,active,allowed,k,l,n,hitmanFire,hitman
 						else{
 							if(heroY-this.y>0){
 								this.hitmanProjDir="down";
-							}	
+							}
 							else{
 								this.hitmanProjDir="up";
 							}
 						}
-					}	
+					}
 				}
 
 			}
@@ -914,24 +914,24 @@ function hitman(x,y,side,orient,direction,active,allowed,k,l,n,hitmanFire,hitman
 						this.hitmanFireAllowed=false;
 						if(heroX-this.x>Math.abs(heroY-this.y)){
 							this.hitmanProjDir="right";
-						}	
+						}
 						else{
 							if(heroY-this.y>0){
 								this.hitmanProjDir="down";
-							}	
+							}
 							else{
 								this.hitmanProjDir="up";
 							}
 						}
 					}
-				}		
+				}
 			}
-		}	
+		}
 
 	}
 
 	this.hitmanProjectileHeroHit = function(){//Condition to check if the hitman's projectile hits the hero
-	
+
 		if(this.hitmanProjectileX+projectileWidth/2>=heroX&&this.hitmanProjectileX+projectileWidth/2<=heroX+heroWidth){
 			if(this.hitmanProjectileY+projectileHeight/2>=heroY&&this.hitmanProjectileY+projectileHeight/2<=heroY+heroHeight){
 				this.hitmanFire=false;
@@ -957,7 +957,7 @@ function obstaclePosition(i){
 		y=240+Math.random()*100;
 		length=500;
 	}
-	obstacleArray.push(new obstacle(x,y,breadth,length,side,hasTwoWalls)); 
+	obstacleArray.push(new obstacle(x,y,breadth,length,side,hasTwoWalls));
 }
 
 function hitmanPosition(i){
@@ -1049,7 +1049,7 @@ if(level!=0){
 	for(i=0;i<nHitman;i++){
 		hitmanPosition(i);
 	}
-}	
+}
 
 function modeSelectorDraw(){
 	ctx.fillStyle="#FF69B4";
@@ -1068,14 +1068,19 @@ function modeSelectorDraw(){
 function drawTitleCard(){
 	ctx.fillStyle = "black";
 	ctx.fillRect(0,0,canvasWidth,canvasHeight);
-	ctx.fillStyle = "violet";
+
+    ctx.fillStyle = "violet";
 	ctx.font = "bold italic 50px Trebuchet MS";
 	ctx.fillText("Maze Runner",380,120);
-	ctx.fillStyle = "red";
+
+    ctx.font = "bold italic 15px Trebuchet MS";
+	ctx.fillText("Created in 2018", 600, 150);
+
+    ctx.fillStyle = "red";
 	ctx.font = "23px Trebuchet MS";
 	if(level==0){
 		ctx.fillText("WARNING: Don't ever dare to touch the walls!",315,200);
-	}	
+	}
 	else{
 		ctx.fillText("WARNING: Don't ever go near the skeletons!",315,190);
 		ctx.fillText("They are known for their weird behaviour",325,225);
@@ -1099,11 +1104,11 @@ function drawTitleCard(){
 		ctx.fillText(" Double click on the character at first to move",250,380);
 		ctx.fillText("and click mouse or use WASD to throw special bombs",200,420);
 		ctx.fillText("NOTE: You can throw only one bomb at a time",240,460);
-	}	
+	}
 	ctx.fillStyle = "white";
 	ctx.font = "bold 30px Trebuchet MS";
 	if(level==0){
-		ctx.fillText("Press ENTER to start the game!",330,390);	
+		ctx.fillText("Press ENTER to start the game!",330,390);
 	}
 	else{
 		ctx.fillText("Press ENTER to start the game!",330,560);
@@ -1129,7 +1134,7 @@ function drawCharacter(){
 		}
 	}
 	ctx.drawImage(hero,48*p,72*q,48,72,heroX,heroY,heroWidth,heroHeight);
-	
+
 }
 
 function drawObstacles(x,y,breadth,length){
@@ -1204,7 +1209,7 @@ function hitmanUpdate(){
 		if(hitmanArray[j].hitmanFire==true&&hitmanArray[j].hitmanFireAllowed==false){
 			if(hitmanArray[j].active==true&&hitmanArray[j].allowed==true){
 				drawHitmanProjectile(hitmanArray[j].hitmanProjectileX,hitmanArray[j].hitmanProjectileY,hitmanArray[j].active,hitmanArray[j].allowed,hitmanArray[j].hitmanFire,hitmanArray[j].hitmanFireAllowed);
-			}		
+			}
 		}
 		hitmanArray[j].x-=speed;
 	}
@@ -1271,7 +1276,7 @@ function hitmanProjectileUpdate(n){
 			hitmanArray[n].hitmanFire=false;
 			hitmanArray[n].hitmanFireAllowed=true;
 		}
-	}	
+	}
 }
 
 function scoreUpdate(){
@@ -1279,14 +1284,14 @@ function scoreUpdate(){
 	score=Math.round(speed*time)+scoreHit;
 }
 
-function scoreDraw(){	
+function scoreDraw(){
 	ctx.fillStyle = "white";
 	ctx.font = "25px bold Trebuchet MS";
 	ctx.fillText("Score : "+score,canvasWidth-canvasWidth*0.12,canvasHeight-canvasHeight*0.05);
 	ctx.fillStyle = "#ff1744";
-}	
+}
 
-function healthmeterDraw(){	
+function healthmeterDraw(){
 	ctx.fillStyle = "white";
 	ctx.fillRect(0.05*canvasWidth,0.9*canvasHeight,170,25);
 	ctx.fillStyle = "black";
@@ -1294,7 +1299,7 @@ function healthmeterDraw(){
 	ctx.fillStyle = "green";
 	if(health<120){
 		ctx.fillStyle = "orange";
-	}	
+	}
 	if(health<70){
 		ctx.fillStyle = "red";
 	}
@@ -1341,7 +1346,7 @@ function levelUpdate(){
 		speed=2.4;
 		heroVelocity=5;
 		levelUpdated[5]=true;
-	}	
+	}
 	else if(score>=500||gameComplete==true){
 		gameComplete=true;
 		gameCompleteDraw();
@@ -1355,7 +1360,7 @@ function initialise(){
 	healthmeterDraw();
 	if(level!=0){
 		hitmanUpdate();
-		heroProjectileUpdate();	
+		heroProjectileUpdate();
 		for(j=0;j<nHitman;j++){
 			if(hitmanArray[j].active==true&&hitmanArray[j].allowed==true){
 				if(hitmanArray[j].hitmanFire==true&&hitmanArray[j].hitmanFireAllowed==false){
@@ -1490,7 +1495,7 @@ function animation(){
 			gameCompleteDraw();
 			return;
 		}
-	}	
+	}
 	requestAnimationFrame(animation);
 }
 

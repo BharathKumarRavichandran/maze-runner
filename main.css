@@ -7,6 +7,16 @@ body{
 	margin: 0;
 }
 
+.container {
+    text-align: center;
+}
+
+.title-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 #title{
 	color: violet;
 	font-family: "Trebuchet MS";
@@ -30,7 +40,7 @@ body{
 	color: white;
 	text-align: center;
 	font-size: 18px;
-	letter-spacing: 4px;
+	/*letter-spacing: 4px;*/
 }
 
 #heart{
