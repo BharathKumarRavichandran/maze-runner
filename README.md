@@ -18,7 +18,7 @@
 * Score based on distance travelled.
 *  Increase in difficulty with faster movement and more enemies as the level goes on.
 *  The mouse cursor can be used to shoot bombs or keys WASD can be used to shoot bombs in directions. 
-* Pause/Resume ( P ), Quit ( Q ), Restart ( R ) buttons included.
+* Pause/Resume ( P ), Quit ( Q ), Restart ( R ) buttons included.....
 
 ## Built With
 * [Vanilla JS](http://vanilla-js.com/)
